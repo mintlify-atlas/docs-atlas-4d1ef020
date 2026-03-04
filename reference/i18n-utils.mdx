@@ -1,0 +1,280 @@
+---
+title: i18n Utilities
+description: Internationalization utilities for multi-language support in the portfolio site
+---
+
+# i18n Utilities
+
+The i18n utilities provide a complete internationalization system for the portfolio website, supporting Spanish (default) and English translations.
+
+## Overview
+
+Located in `src/i18n/utils.ts`, this module exports translation utilities, language configuration, and type-safe translation functions.
+
+## Language Configuration
+
+### Supported Languages
+
+```typescript
+export const languages = {
+    es: 'Español',
+    en: 'English',
+};
+
+export const defaultLang = 'es';
+```
+
+<ParamField path="languages" type="object">
+  Defines all supported languages with their display names
+  - `es`: Spanish (Español)
+  - `en`: English
+</ParamField>
+
+<ParamField path="defaultLang" type="string" default="es">
+  The default language used when no language is detected in the URL
+</ParamField>
+
+## Translation Structure
+
+All translations are stored in a strongly-typed object with keys organized by section:
+
+```typescript
+export const translations = {
+    es: {
+        // Nav
+        'nav.home': 'Inicio',
+        'nav.about': 'Sobre mí',
+        'nav.projects': 'Soluciones Cloud',
+        // ... more translations
+    },
+    en: {
+        'nav.home': 'Home',
+        'nav.about': 'About',
+        'nav.projects': 'Cloud Solutions',
+        // ... more translations
+    },
+} as const;
+```
+
+### Translation Categories
+
+<AccordionGroup>
+  <Accordion title="Navigation (nav.*)">
+    - `nav.home`: Home/Inicio
+    - `nav.about`: About/Sobre mí
+    - `nav.projects`: Cloud Solutions/Soluciones Cloud
+    - `nav.skills`: Skills/Habilidades
+    - `nav.contact`: Contact/Contacto
+  </Accordion>
+
+  <Accordion title="Hero Section (hero.*)">
+    - `hero.greeting`: Greeting text
+    - `hero.name`: Full name
+    - `hero.role`: Professional role
+    - `hero.bio`: Biography description
+    - `hero.cta`: Call-to-action button text
+    - `hero.contact`: Contact button text
+  </Accordion>
+
+  <Accordion title="About Section (about.*)">
+    - `about.title`: Section title
+    - `about.description`: Description text
+    - `about.education`: Education subsection title
+    - `about.experience`: Experience subsection title
+    - `about.certifications`: Certifications subsection title
+  </Accordion>
+
+  <Accordion title="Education Entries (edu.*)">
+    Education-related translations for UADE and IFTS programs
+  </Accordion>
+
+  <Accordion title="Experience Entries (exp.*)">
+    Work experience translations for cloud engineering roles
+  </Accordion>
+
+  <Accordion title="Case Studies (case*.*, casestudies.*)">
+    Case study titles, challenges, solutions, and labels
+  </Accordion>
+
+  <Accordion title="Skills (skills.*, soft.*, lang.*)">
+    Technical skills, soft skills, and language proficiency
+  </Accordion>
+
+  <Accordion title="Contact (contact.*)">
+    Contact form and social media links
+  </Accordion>
+
+  <Accordion title="Footer (footer.*)">
+    Footer text and copyright information
+  </Accordion>
+</AccordionGroup>
+
+## TypeScript Types
+
+### TranslationKey
+
+```typescript
+export type TranslationKey = keyof typeof translations.es;
+```
+
+A union type of all valid translation keys, ensuring type safety when accessing translations.
+
+## Functions
+
+### getLangFromUrl
+
+Extracts the language code from a URL pathname.
+
+```typescript
+export function getLangFromUrl(url: URL): keyof typeof translations
+```
+
+<ParamField path="url" type="URL" required>
+  The URL object to extract the language from
+</ParamField>
+
+<ResponseField name="return" type="'es' | 'en'">
+  The detected language code, or `defaultLang` if not found
+</ResponseField>
+
+**Example:**
+
+```typescript
+const url = new URL('https://example.com/en/about');
+const lang = getLangFromUrl(url); // 'en'
+
+const url2 = new URL('https://example.com/invalid/page');
+const lang2 = getLangFromUrl(url2); // 'es' (default)
+```
+
+**Implementation:**
+
+The function splits the pathname by `/` and checks if the second segment (index 1) matches a language in the `translations` object. If not found, returns `defaultLang`.
+
+### useTranslations
+
+Creates a translation function for a specific language.
+
+```typescript
+export function useTranslations(
+  lang: keyof typeof translations
+): (key: TranslationKey) => string
+```
+
+<ParamField path="lang" type="'es' | 'en'" required>
+  The language code to create translations for
+</ParamField>
+
+<ResponseField name="return" type="function">
+  A translation function that accepts a `TranslationKey` and returns the translated string
+</ResponseField>
+
+**Example:**
+
+```typescript
+// In an Astro component
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const homeText = t('nav.home'); // 'Home' or 'Inicio'
+const greeting = t('hero.greeting'); // "Hi, I'm" or "Hola, soy"
+```
+
+**Fallback Behavior:**
+
+If a translation key is not found in the requested language, it falls back to the `defaultLang` translation:
+
+```typescript
+return translations[lang][key] || translations[defaultLang][key];
+```
+
+### getLocalizedPath
+
+Generates a localized URL path with optional hash.
+
+```typescript
+export function getLocalizedPath(
+  lang: string,
+  hash?: string
+): string
+```
+
+<ParamField path="lang" type="string" required>
+  The language code for the path
+</ParamField>
+
+<ParamField path="hash" type="string" default="''">
+  Optional hash/anchor to append to the path
+</ParamField>
+
+<ResponseField name="return" type="string">
+  A formatted path string in the format `/{lang}/{hash}`
+</ResponseField>
+
+**Example:**
+
+```typescript
+getLocalizedPath('en'); // '/en/'
+getLocalizedPath('es', '#about'); // '/es/#about'
+getLocalizedPath('en', '#contact'); // '/en/#contact'
+```
+
+## Usage in Astro Components
+
+Typical usage pattern in an Astro component:
+
+```astro
+---
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<nav>
+  <a href={`/${lang}/#home`}>{t('nav.home')}</a>
+  <a href={`/${lang}/#about`}>{t('nav.about')}</a>
+  <a href={`/${lang}/#projects`}>{t('nav.projects')}</a>
+  <a href={`/${lang}/#skills`}>{t('nav.skills')}</a>
+  <a href={`/${lang}/#contact`}>{t('nav.contact')}</a>
+</nav>
+```
+
+## Best Practices
+
+<Note>
+  **Type Safety**: Always use the `TranslationKey` type to ensure translation keys are valid. The TypeScript compiler will catch typos and missing translations.
+</Note>
+
+<Tip>
+  **Consistent Naming**: Follow the established naming convention: `section.item` (e.g., `nav.home`, `hero.greeting`)
+</Tip>
+
+<Warning>
+  **Missing Translations**: If you add a new translation key, ensure it exists in both `es` and `en` objects to maintain translation parity.
+</Warning>
+
+## Adding New Translations
+
+1. Add the key-value pair to both `es` and `en` objects in the `translations` constant
+2. TypeScript will automatically update the `TranslationKey` type
+3. Use the `t()` function to access the new translation
+
+```typescript
+export const translations = {
+    es: {
+        // ... existing translations
+        'new.key': 'Nuevo valor',
+    },
+    en: {
+        // ... existing translations
+        'new.key': 'New value',
+    },
+} as const;
+```
+
+## Related Files
+
+- `src/i18n/utils.ts`: Source file (src/i18n/utils.ts:1)
+- `astro.config.mjs`: i18n configuration (astro.config.mjs:6)
+- All `.astro` components in `src/components/`: Consumers of these utilities

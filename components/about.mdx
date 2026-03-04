@@ -1,0 +1,269 @@
+---
+title: "About Component"
+description: "Education, certifications, and professional experience with timeline layouts"
+---
+
+## Overview
+
+The About component displays professional certifications, education timeline, and work experience timeline. It features vertical timeline visualizations with animated positioning and interactive certification cards.
+
+## Source Location
+
+`/src/components/About.astro`
+
+## Features
+
+- Azure certification cards with verification links
+- Dual timeline layout (Education & Experience)
+- Dynamic timeline line positioning with JavaScript
+- Reveal animations with staggered delays
+- Hover effects on cards
+- Fully internationalized
+
+## Props
+
+No props required. The component is self-contained and uses:
+
+- Internal `certifications` array with Azure certification data
+- Translation keys for education and experience content
+- Auto-detected language from URL
+
+## Data Structures
+
+### Certifications Array
+
+```typescript
+const certifications = [
+  { 
+    name: 'AZ-104', 
+    title: 'Azure Administrator', 
+    color: 'from-blue-500 to-blue-700', 
+    url: 'https://learn.microsoft.com/...'
+  },
+  { name: 'AZ-700', title: 'Azure Network Engineer', ... },
+  { name: 'AZ-900', title: 'Azure Fundamentals', ... },
+  { name: 'DP-900', title: 'Azure Data Fundamentals', ... },
+];
+```
+
+<ParamField path="name" type="string">
+  Certification code (e.g., "AZ-104")
+</ParamField>
+
+<ParamField path="title" type="string">
+  Full certification name
+</ParamField>
+
+<ParamField path="color" type="string">
+  Tailwind gradient classes for the badge
+</ParamField>
+
+<ParamField path="url" type="string">
+  Microsoft Learn verification URL
+</ParamField>
+
+## Code Example
+
+```astro
+import About from '../components/About.astro';
+
+<About />
+```
+
+## Translation Keys
+
+### General
+
+- `about.title` - Section title
+- `about.description` - Section description
+- `about.certifications` - Certifications heading
+- `about.education` - Education heading
+- `about.experience` - Experience heading
+
+### Education Entries
+
+<CodeGroup>
+```javascript UADE (Current)
+edu.uade.title        // Degree title
+edu.uade.institution  // University name
+edu.uade.period       // Date range
+edu.uade.status       // "In Progress"
+edu.uade.description  // Program description
+```
+
+```javascript IFTS (Completed)
+edu.ifts.title
+edu.ifts.institution
+edu.ifts.period
+edu.ifts.status       // "Completed"
+edu.ifts.description
+edu.ifts.details      // Bullet points (newline-separated)
+```
+</CodeGroup>
+
+### Experience Entries
+
+<CodeGroup>
+```javascript Azure Cloud Engineer
+exp.azure.title
+exp.azure.company
+exp.azure.period
+exp.azure.location
+exp.azure.type        // "Full-time"
+exp.azure.description // Paragraphs (newline-separated)
+```
+
+```javascript Cloud Engineer
+exp.cloud.title
+exp.cloud.company
+exp.cloud.period
+exp.cloud.location
+exp.cloud.description
+```
+</CodeGroup>
+
+## Component Structure
+
+### 1. Certifications Grid
+
+4-column responsive grid (2 columns on mobile):
+
+```astro
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  {certifications.map((cert) => (
+    <a href={cert.url} target="_blank" rel="noopener noreferrer">
+      <!-- Certification card -->
+    </a>
+  ))}
+</div>
+```
+
+### 2. Timeline Layout
+
+Two-column grid on desktop, stacked on mobile:
+
+```astro
+<div class="grid md:grid-cols-2 gap-8">
+  <!-- Education Timeline -->
+  <div class="edu-timeline relative pl-10">
+    <div class="edu-timeline-line absolute"></div>
+    <!-- Timeline items -->
+  </div>
+  
+  <!-- Experience Timeline -->
+  <div class="exp-timeline relative pl-10">
+    <div class="exp-timeline-line absolute"></div>
+    <!-- Timeline items -->
+  </div>
+</div>
+```
+
+## Timeline Positioning Script
+
+The component includes JavaScript to dynamically position timeline lines:
+
+```javascript
+function positionTimelineLines() {
+  const timelines = [
+    { container: '.edu-timeline', line: '.edu-timeline-line', dots: '.edu-dot' },
+    { container: '.exp-timeline', line: '.exp-timeline-line', dots: '.exp-dot' },
+  ];
+  
+  // Phase 1: Batch ALL reads (prevent layout thrashing)
+  const measurements = [];
+  // ... measure positions
+  
+  // Phase 2: Batch ALL writes
+  for (const { lineEl, top, height } of measurements) {
+    lineEl.style.top = `${top}px`;
+    lineEl.style.height = `${height}px`;
+  }
+}
+```
+
+<Note>
+  The timeline positioning uses a read-then-write batching pattern to prevent layout thrashing and ensure smooth performance.
+</Note>
+
+## Styling Patterns
+
+### Certification Cards
+
+```astro
+<div class="group relative p-[1px] rounded-2xl bg-gradient-to-br from-primary-400/50 to-accent-400/50 hover:from-primary-400 hover:to-accent-400">
+  <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-5">
+    <div class={`bg-gradient-to-br ${cert.color} text-white`}>
+      <!-- Badge icon -->
+    </div>
+    <p class="font-bold text-primary-600">{cert.name}</p>
+  </div>
+</div>
+```
+
+### Timeline Dots
+
+```astro
+<div class="edu-dot absolute -left-10 w-6 h-6 rounded-full bg-primary-500 border-[3px] border-white dark:border-slate-900 shadow-[0_0_0_3px_rgba(59,130,246,0.15)]" style="top: 1.15rem;"></div>
+```
+
+### Timeline Cards
+
+- Gradient border on hover
+- Glass morphism background
+- Lift effect: `hover:-translate-y-2`
+- Status badges with color coding (blue for in-progress, green for completed)
+
+## Performance Features
+
+<Tip>
+  The About section uses `content-visibility: auto` with `contain-intrinsic-size: auto 800px` for better scroll performance.
+</Tip>
+
+- Debounced resize handler (150ms)
+- `requestAnimationFrame` for timeline positioning
+- Font loading detection with `document.fonts.ready`
+- Passive event listeners on resize
+
+## Accessibility
+
+- External certification links have `rel="noopener noreferrer"`
+- Semantic HTML structure with proper headings
+- Color contrast meets WCAG standards
+- Keyboard-accessible certification links
+
+## Customization
+
+### Adding Certifications
+
+Add new entries to the `certifications` array:
+
+```astro
+const certifications = [
+  // existing...
+  { 
+    name: 'AZ-305', 
+    title: 'Azure Solutions Architect', 
+    color: 'from-indigo-500 to-purple-700',
+    url: 'https://...' 
+  },
+];
+```
+
+### Timeline Colors
+
+Education uses primary colors, experience uses accent:
+
+```astro
+<!-- Education -->
+<div class="bg-gradient-to-b from-primary-400 to-primary-300"></div>
+<div class="bg-primary-500"></div>
+
+<!-- Experience -->
+<div class="bg-gradient-to-b from-accent-500 to-primary-400"></div>
+<div class="bg-accent-500"></div>
+```
+
+## Related Components
+
+- [Skills](/components/skills) - Complements education with skill showcase
+- [Projects](/components/projects) - Shows practical application of education

@@ -1,0 +1,253 @@
+---
+title: "Footer Component"
+description: "Simple page footer with attribution and copyright information"
+---
+
+## Overview
+
+The Footer component is a minimal, responsive footer displaying attribution text and dynamic copyright year. It provides a clean closing to the page layout.
+
+## Source Location
+
+`/src/components/Footer.astro`
+
+## Features
+
+- Dynamic copyright year (auto-updates)
+- Responsive two-column layout (stacks on mobile)
+- Top border separator
+- Internationalized text
+- Dark mode support
+
+## Props
+
+No props required. Uses translation system for text content.
+
+## Code Example
+
+```astro
+import Footer from '../components/Footer.astro';
+
+<Footer />
+```
+
+## Full Source Code
+
+```astro
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<footer class="relative py-8 border-t border-slate-200/50 dark:border-slate-800/50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-slate-500 dark:text-slate-400 text-sm">
+        {t('footer.text')}
+      </p>
+      <p class="text-slate-500 dark:text-slate-400 text-sm">
+        &copy; {new Date().getFullYear()} Kevin Palma. {t('footer.rights')}
+      </p>
+    </div>
+  </div>
+</footer>
+```
+
+## Translation Keys
+
+<ParamField path="footer.text" type="string">
+  Left-side attribution or tagline text
+</ParamField>
+
+<ParamField path="footer.rights" type="string">
+  Rights reserved text (e.g., "All rights reserved.")
+</ParamField>
+
+## Structure
+
+### Layout
+
+```astro
+<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+  <p><!-- Attribution --></p>
+  <p><!-- Copyright --></p>
+</div>
+```
+
+- **Mobile**: Stacked vertically (`flex-col`)
+- **Desktop**: Horizontal row (`md:flex-row`)
+- **Alignment**: Centered on mobile, space-between on desktop
+- **Gap**: 16px between elements
+
+### Dynamic Copyright Year
+
+```astro
+&copy; {new Date().getFullYear()} Kevin Palma. {t('footer.rights')}
+```
+
+Output example:
+```
+© 2026 Kevin Palma. All rights reserved.
+```
+
+<Tip>
+  The copyright year updates automatically using `new Date().getFullYear()`, so you never need to manually update it.
+</Tip>
+
+## Styling Details
+
+### Footer Container
+
+```astro
+<footer class="relative py-8 border-t border-slate-200/50 dark:border-slate-800/50">
+```
+
+- **Padding**: 32px vertical (`py-8`)
+- **Border**: Top border with 50% opacity
+- **Dark mode**: Darker border color
+
+### Text Styling
+
+```astro
+<p class="text-slate-500 dark:text-slate-400 text-sm">
+```
+
+- **Color**: Medium gray (slate-500)
+- **Dark mode**: Lighter gray (slate-400)
+- **Size**: Small text (`text-sm` = 14px)
+
+### Container Width
+
+```astro
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+```
+
+- **Max width**: 1152px (6xl)
+- **Centered**: `mx-auto`
+- **Responsive padding**: 16px → 24px → 32px
+
+## Responsive Behavior
+
+| Breakpoint | Layout | Alignment |
+|------------|--------|----------|
+| Mobile (< 768px) | Vertical stack | Center |
+| Desktop (≥ 768px) | Horizontal row | Space between |
+
+## Accessibility
+
+- ✅ **Semantic HTML**: Uses `<footer>` element
+- ✅ **Color contrast**: Meets WCAG AA standards
+- ✅ **Readable text**: Small but legible font size
+- ✅ **No interactive elements**: Pure informational content
+
+## Customization
+
+### Adding Links
+
+Add navigation or social links:
+
+```astro
+<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+  <p class="text-slate-500 dark:text-slate-400 text-sm">
+    {t('footer.text')}
+  </p>
+  
+  <!-- Social links -->
+  <div class="flex items-center gap-4">
+    <a href="https://linkedin.com/in/..." class="text-slate-500 hover:text-primary-600 transition-colors">
+      LinkedIn
+    </a>
+    <a href="https://github.com/..." class="text-slate-500 hover:text-primary-600 transition-colors">
+      GitHub
+    </a>
+  </div>
+  
+  <p class="text-slate-500 dark:text-slate-400 text-sm">
+    &copy; {new Date().getFullYear()} Kevin Palma. {t('footer.rights')}
+  </p>
+</div>
+```
+
+### Multi-line Footer
+
+Stack all elements:
+
+```astro
+<div class="flex flex-col items-center gap-2 text-center">
+  <p class="text-slate-500 dark:text-slate-400 text-sm">
+    {t('footer.text')}
+  </p>
+  <p class="text-slate-500 dark:text-slate-400 text-sm">
+    &copy; {new Date().getFullYear()} Kevin Palma. {t('footer.rights')}
+  </p>
+  <p class="text-slate-400 dark:text-slate-500 text-xs">
+    Built with Astro & Tailwind CSS
+  </p>
+</div>
+```
+
+### Custom Name
+
+Replace hardcoded name with translation:
+
+```astro
+&copy; {new Date().getFullYear()} {t('footer.name')}. {t('footer.rights')}
+```
+
+Add to translations:
+
+```javascript
+footer: {
+  name: 'Kevin Palma',
+  text: 'Made with ❤️ in Argentina',
+  rights: 'All rights reserved.',
+}
+```
+
+### Removing Border
+
+```astro
+<!-- No border -->
+<footer class="relative py-8">
+
+<!-- Thicker border -->
+<footer class="relative py-8 border-t-2 border-slate-300 dark:border-slate-700">
+```
+
+## Integration Example
+
+Typically used in the main layout:
+
+```astro
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<html>
+  <body>
+    <Navbar />
+    
+    <main>
+      <slot />
+    </main>
+    
+    <Footer />
+  </body>
+</html>
+```
+
+## Performance
+
+- Minimal HTML (2 paragraphs)
+- CSS-only styling
+- No JavaScript
+- No external resources
+- Negligible render cost
+
+## Related Components
+
+- [Navbar](/components/navbar) - Top navigation complement
+- [Contact](/components/contact) - Often placed just above footer

@@ -1,0 +1,100 @@
+---
+title: "Components Overview"
+description: "Complete guide to all Astro components in the portfolio application"
+---
+
+## Introduction
+
+This portfolio application is built with Astro and features a collection of reusable, responsive components designed for a modern cloud engineer portfolio website. All components are built using Astro's component syntax with TypeScript support and styled with Tailwind CSS.
+
+## Component Architecture
+
+The components follow a modular architecture pattern:
+- **Section Components**: Main content sections (Hero, About, Projects, Skills, Contact)
+- **Layout Components**: Navigation and structure (Navbar, Footer)
+- **UI Components**: Reusable interface elements (ThemeToggle, LanguageSelector, CaseStudyCard)
+- **Internationalization**: Full i18n support with `getLangFromUrl` and `useTranslations` utilities
+
+## Available Components
+
+### Section Components
+
+| Component | Purpose | Key Features |
+|-----------|---------|-------------|
+| [Hero](/components/hero) | Landing section with profile | Animated gradients, profile image, CTA buttons |
+| [About](/components/about) | Education & experience | Certifications, timeline layouts, reveal animations |
+| [Projects](/components/projects) | Case studies showcase | Grid layout, case study cards |
+| [Skills](/components/skills) | Technical & soft skills | Categorized skill cards, hover effects |
+| [Contact](/components/contact) | Contact information | Email, LinkedIn, GitHub with obfuscation |
+
+### Layout Components
+
+| Component | Purpose | Key Features |
+|-----------|---------|-------------|
+| [Navbar](/components/navbar) | Top navigation | Responsive menu, smooth scrolling, theme toggle |
+| [Footer](/components/footer) | Page footer | Copyright, year display |
+
+### UI Components
+
+| Component | Purpose | Key Features |
+|-----------|---------|-------------|
+| [ThemeToggle](/components/theme-toggle) | Dark mode switcher | LocalStorage persistence, icon transition |
+| [LanguageSelector](/components/language-selector) | Language switcher | English/Spanish toggle, preserves hash navigation |
+| [CaseStudyCard](/components/case-study-card) | Project card | Challenge/solution format, tech stack display |
+
+## Common Features
+
+### Internationalization
+
+All components support English and Spanish through the i18n system:
+
+```astro
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+```
+
+### Styling Patterns
+
+- **Gradient borders**: `bg-gradient-to-br from-primary-400 to-accent-400`
+- **Glass morphism**: `bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm`
+- **Hover effects**: `hover:-translate-y-2 transition-[transform,box-shadow]`
+- **Dark mode**: All components support dark mode with `dark:` variants
+
+### Performance Optimizations
+
+- **Content visibility**: `content-visibility: auto` for off-screen sections
+- **Reveal animations**: Staggered animations with `--reveal-delay`
+- **Optimized images**: WebP format with lazy loading
+- **Debounced resize handlers**: For timeline positioning
+
+## Getting Started
+
+1. All components are located in `/src/components/`
+2. Import components into your Astro pages
+3. Components automatically adapt to the current language from URL
+4. Dark mode is controlled via `documentElement.classList`
+
+## Design System
+
+### Color Palette
+
+- **Primary**: Blue tones (`primary-400` to `primary-700`)
+- **Accent**: Cyan/teal tones (`accent-400` to `accent-600`)
+- **Neutral**: Slate for text and backgrounds
+
+### Typography
+
+- Headlines: `text-4xl sm:text-5xl font-bold`
+- Subheadings: `text-2xl font-bold`
+- Body text: `text-base leading-relaxed`
+
+### Spacing
+
+- Section padding: `py-20 lg:py-28`
+- Container: `max-w-6xl mx-auto px-4 sm:px-6 lg:px-8`
+
+<Note>
+All components are designed to be responsive and work seamlessly across mobile, tablet, and desktop viewports.
+</Note>

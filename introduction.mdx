@@ -1,0 +1,264 @@
+---
+title: Introduction
+description: Learn about Kevin Palma's Azure Cloud Engineer portfolio - a modern, multilingual portfolio website built with Astro and Tailwind CSS
+---
+
+## Welcome
+
+This is the documentation for **Kevin Maximiliano Palma Romero's Portfolio** - a modern, performance-optimized portfolio website showcasing cloud engineering expertise, certifications, and real-world Azure solutions.
+
+The portfolio is built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/), featuring a premium glassmorphism design with advanced scroll animations and full internationalization support.
+
+## Who is this for?
+
+This portfolio is designed for **Kevin Maximiliano Palma Romero**, an Azure Cloud Engineer at Readymind, specializing in:
+
+- Cloud infrastructure deployment and management
+- Azure networking and governance
+- Cross-subscription migrations
+- Infrastructure as Code (IaC)
+- Cloud cost optimization (FinOps)
+- Technical documentation aligned with Cloud Adoption Framework (CAF)
+
+### Target Audience
+
+The portfolio serves multiple audiences:
+
+- **Recruiters & Hiring Managers** - Showcasing Azure certifications and hands-on experience
+- **Potential Clients** - Demonstrating real-world cloud solutions and case studies
+- **Developers** - As a reference implementation for modern portfolio websites
+- **Spanish & English Speakers** - With full bilingual support
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Internationalization (i18n)" icon="globe">
+    Full support for English and Spanish with automatic routing and language-aware CV downloads
+  </Card>
+  
+  <Card title="Dark Mode" icon="moon">
+    Toggle between light and dark themes with persistent user preference
+  </Card>
+  
+  <Card title="Glassmorphism Design" icon="sparkles">
+    Modern, premium UI with backdrop blur, gradients, and sophisticated animations
+  </Card>
+  
+  <Card title="Fully Responsive" icon="mobile">
+    Optimized layouts for mobile, tablet, and desktop devices
+  </Card>
+  
+  <Card title="Scroll-Reveal Animations" icon="wand-magic-sparkles">
+    IntersectionObserver-based animations with staggered delays for smooth reveals
+  </Card>
+  
+  <Card title="Contact Privacy" icon="lock">
+    Email, LinkedIn, and GitHub hidden from bots with click-to-reveal protection
+  </Card>
+</CardGroup>
+
+### Design Features
+
+The portfolio implements several advanced design patterns:
+
+- **Animated gradient borders** - Rotating border animations on profile images
+- **Floating background blobs** - Subtle animated backgrounds with blur effects
+- **Timeline layouts** - Vertical timelines for education and experience
+- **Case study cards** - Narrative challenge/solution format with distinct icons
+- **Hover effects** - Gradient transitions and transform animations
+
+## Portfolio Sections
+
+| Section | Description |
+|---------|-------------|
+| **Hero** | Introduction with role badge, bio, and CTA buttons for contact and CV download |
+| **About** | Certifications (linked to Microsoft Learn), education timeline, and experience timeline |
+| **Cloud Solutions** | 5 detailed case study cards showcasing real Azure projects with challenge/solution narratives |
+| **Skills** | Technical skills, soft skills, and languages organized in categorized cards with gradient hover effects |
+| **Contact** | Privacy-first contact cards (email, LinkedIn, GitHub) with click-to-reveal functionality |
+
+## Tech Stack
+
+The portfolio is built with a modern, performance-focused technology stack:
+
+<CodeGroup>
+```json package.json
+{
+  "name": "kevin-portfolio",
+  "version": "1.0.0",
+  "dependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.7.10",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "terser": "^5.46.0"
+  }
+}
+```
+
+```javascript astro.config.mjs
+export default defineConfig({
+  integrations: [tailwind({ applyBaseStyles: false })],
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: true,
+    },
+  },
+  vite: {
+    build: {
+      cssMinify: 'esbuild',
+      minify: 'terser'
+    }
+  }
+});
+```
+</CodeGroup>
+
+### Core Technologies
+
+- **Framework**: [Astro](https://astro.build/) v5 - Zero-JS islands architecture for optimal performance
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) v3 - Utility-first CSS framework with custom color system
+- **Language**: TypeScript - Type-safe development experience
+- **Deployment**: [Vercel](https://vercel.com/) - Edge network deployment with automatic HTTPS
+
+### Performance Optimizations
+
+The portfolio includes several performance enhancements:
+
+```javascript
+// CSS and JS minification
+cssMinify: 'esbuild',
+minify: 'terser',
+terserOptions: {
+  compress: {
+    drop_console: true,
+    drop_debugger: true
+  }
+}
+```
+
+- **Critical CSS inlining** - Above-the-fold styles inlined to eliminate render-blocking
+- **Font preloading** - Google Fonts preconnect and preload for faster text rendering
+- **Image optimization** - Astro Image component with WebP format and lazy loading
+- **Minimal JavaScript** - Only essential scripts for theme toggle and scroll animations
+
+## Internationalization System
+
+The portfolio implements a custom i18n system with 240+ translation keys:
+
+```typescript
+// src/i18n/utils.ts
+export const languages = {
+  es: 'Español',
+  en: 'English',
+};
+
+export const defaultLang = 'es';
+
+export function getLangFromUrl(url: URL) {
+  const [, lang] = url.pathname.split('/');
+  if (lang in translations) return lang as keyof typeof translations;
+  return defaultLang;
+}
+
+export function useTranslations(lang: keyof typeof translations) {
+  return function t(key: TranslationKey) {
+    return translations[lang][key] || translations[defaultLang][key];
+  };
+}
+```
+
+### Translation Coverage
+
+- Navigation labels
+- Hero section (greeting, role, bio, CTAs)
+- About section (education, experience, certifications)
+- 5 complete case studies
+- Skills categories
+- Contact form labels
+- Footer content
+
+## Project Structure
+
+```
+├── public/
+│   ├── cv/
+│   │   ├── es/    # Spanish CV (PDF)
+│   │   └── en/    # English CV (PDF)
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   ├── Hero.astro           # Landing section with profile
+│   │   ├── About.astro          # Certifications & timelines
+│   │   ├── Projects.astro       # Cloud Solutions section
+│   │   ├── CaseStudyCard.astro  # Reusable case study card
+│   │   ├── Skills.astro         # Skills categorization
+│   │   ├── Contact.astro        # Privacy-first contact
+│   │   ├── Navbar.astro         # Sticky navigation
+│   │   ├── Footer.astro         # Footer with credits
+│   │   ├── ThemeToggle.astro    # Dark mode switcher
+│   │   └── LanguageSelector.astro # Language switcher
+│   ├── i18n/
+│   │   └── utils.ts             # Translation utilities
+│   ├── layouts/
+│   │   └── Layout.astro         # Global layout + scroll-reveal
+│   └── pages/
+│       ├── es/index.astro       # Spanish homepage
+│       ├── en/index.astro       # English homepage
+│       └── index.astro          # Root redirect
+├── astro.config.mjs             # Astro configuration
+├── tailwind.config.mjs          # Tailwind configuration
+└── package.json
+```
+
+## Scroll-Reveal Animation System
+
+The portfolio implements a custom scroll-reveal system using IntersectionObserver:
+
+```javascript
+// Inline script in Layout.astro
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+```
+
+Elements with the `.reveal` class automatically fade in and slide up when they enter the viewport, with customizable delays using CSS variables:
+
+```css
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(.16,1,.3,1),
+              transform .7s cubic-bezier(.16,1,.3,1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+```
+
+## Next Steps
+
+Ready to get started? Check out the [Quickstart](/quickstart) guide to set up the portfolio locally and make your first customizations.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get the portfolio running locally in minutes
+  </Card>
+  
+  <Card title="Customization" icon="palette" href="/guides/customization">
+    Learn how to customize content, colors, and components
+  </Card>
+</CardGroup>

@@ -1,0 +1,324 @@
+---
+title: "LanguageSelector Component"
+description: "Language switcher button for English/Spanish with hash preservation"
+---
+
+## Overview
+
+The LanguageSelector component is a simple link button that toggles between English and Spanish languages while preserving the current page section (hash navigation).
+
+## Source Location
+
+`/src/components/LanguageSelector.astro`
+
+## Features
+
+- Toggles between English (en) and Spanish (es)
+- Preserves hash navigation (e.g., `#about`, `#contact`)
+- Shows the alternative language name
+- Globe icon for visual clarity
+- Hover effects
+- Fully integrated with i18n system
+
+## Props
+
+No props required. Auto-detects current language and URL.
+
+## Code Example
+
+```astro
+import LanguageSelector from '../components/LanguageSelector.astro';
+
+<LanguageSelector />
+```
+
+## Full Source Code
+
+```astro
+---
+import { getLangFromUrl, languages } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const otherLang = lang === 'es' ? 'en' : 'es';
+
+// Get the current hash from the URL to preserve section navigation
+const currentPath = Astro.url.pathname;
+const hash = Astro.url.hash || '';
+---
+
+<a
+  href={`/${otherLang}/${hash}`}
+  class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors text-slate-600 dark:text-slate-300"
+  aria-label={`Switch to ${languages[otherLang]}`}
+>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+  {languages[otherLang]}
+</a>
+```
+
+## How It Works
+
+### 1. Detect Current Language
+
+```astro
+const lang = getLangFromUrl(Astro.url);
+// Returns: 'en' or 'es'
+```
+
+### 2. Determine Alternative Language
+
+```astro
+const otherLang = lang === 'es' ? 'en' : 'es';
+// If current is Spanish → show English
+// If current is English → show Spanish
+```
+
+### 3. Preserve Hash Navigation
+
+```astro
+const hash = Astro.url.hash || '';
+// Examples:
+// https://example.com/en/#about → hash = '#about'
+// https://example.com/es/ → hash = ''
+```
+
+### 4. Build Language Switch URL
+
+```astro
+href={`/${otherLang}/${hash}`}
+// Examples:
+// Current: /en/#about → Switch to: /es/#about
+// Current: /es/#contact → Switch to: /en/#contact
+```
+
+## Languages Configuration
+
+The `languages` object from `i18n/utils.ts`:
+
+```typescript
+export const languages = {
+  en: 'English',
+  es: 'Español',
+};
+```
+
+## Component Behavior Examples
+
+| Current URL | Current Lang | Shows | Link Href |
+|-------------|--------------|-------|----------|
+| `/en/` | en | Español | `/es/` |
+| `/es/` | es | English | `/en/` |
+| `/en/#about` | en | Español | `/es/#about` |
+| `/es/#projects` | es | English | `/en/#projects` |
+
+## Styling
+
+```astro
+<a class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors text-slate-600 dark:text-slate-300">
+```
+
+- **Layout**: Flexbox with icon and text
+- **Gap**: 6px between icon and text
+- **Padding**: 12px horizontal, 6px vertical
+- **Border radius**: Large (lg = 8px)
+- **Hover**: Semi-transparent background
+- **Text**: Small, medium weight
+- **Colors**: Slate tones with dark mode variants
+
+### Globe Icon
+
+```astro
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+</svg>
+```
+
+- **Size**: 16x16px
+- **Style**: Outline (stroke, not fill)
+- **Color**: Inherits text color
+
+## Integration in Navbar
+
+Typically used alongside ThemeToggle:
+
+```astro
+<div class="flex items-center gap-2">
+  <LanguageSelector />
+  <ThemeToggle />
+  <button id="mobile-menu-btn">...</button>
+</div>
+```
+
+## Accessibility
+
+- ✅ **ARIA label**: Descriptive label for screen readers
+- ✅ **Semantic HTML**: Uses proper `<a>` element
+- ✅ **Keyboard accessible**: Standard link navigation
+- ✅ **Visual clarity**: Icon + text label
+- ✅ **Focus state**: Inherits from link styles
+
+## Internationalization Flow
+
+1. **User visits** `/en/#about`
+2. **Component detects** `lang = 'en'`
+3. **Component calculates** `otherLang = 'es'`
+4. **Component displays** "Español" (the alternative)
+5. **User clicks** link
+6. **Navigates to** `/es/#about`
+7. **Page reloads** in Spanish, preserving the #about section
+
+## Hash Preservation Benefits
+
+<Tip>
+  Preserving the hash ensures users stay on the same section when switching languages, providing a seamless experience.
+</Tip>
+
+Without hash preservation:
+- User is on `/en/#skills`
+- Clicks language switch
+- Lands at `/es/` (top of page)
+- Must scroll to find skills section again ❌
+
+With hash preservation:
+- User is on `/en/#skills`
+- Clicks language switch
+- Lands at `/es/#skills` (same section)
+- Stays in context ✅
+
+## Customization
+
+### Adding More Languages
+
+1. Update `languages` object in `i18n/utils.ts`:
+
+```typescript
+export const languages = {
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
+  de: 'Deutsch',
+};
+```
+
+2. Change component to a dropdown:
+
+```astro
+<div class="relative group">
+  <button class="...">
+    {languages[lang]}
+  </button>
+  <div class="absolute hidden group-hover:block ...">
+    {Object.entries(languages)
+      .filter(([code]) => code !== lang)
+      .map(([code, name]) => (
+        <a href={`/${code}/${hash}`}>{name}</a>
+      ))
+    }
+  </div>
+</div>
+```
+
+### Different Icon
+
+Replace with flag emojis:
+
+```astro
+<a class="...">
+  <span class="text-base">
+    {otherLang === 'en' ? '🇺🇸' : '🇪🇸'}
+  </span>
+  {languages[otherLang]}
+</a>
+```
+
+Or use a different SVG:
+
+```astro
+<!-- Language/translate icon -->
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+</svg>
+```
+
+### Show Current Language Instead
+
+Display current language rather than alternative:
+
+```astro
+---
+const lang = getLangFromUrl(Astro.url);
+const otherLang = lang === 'es' ? 'en' : 'es';
+const hash = Astro.url.hash || '';
+---
+
+<a href={`/${otherLang}/${hash}`} class="...">
+  <svg>...</svg>
+  {languages[lang]} → {languages[otherLang]}
+</a>
+```
+
+Output: "English → Español" or "Español → English"
+
+### Remove Icon
+
+Text only:
+
+```astro
+<a href={`/${otherLang}/${hash}`} class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors text-slate-600 dark:text-slate-300">
+  {languages[otherLang]}
+</a>
+```
+
+## Testing
+
+### Manual Testing
+
+1. Navigate to `/en/#about`
+2. Click language selector
+3. Verify URL changes to `/es/#about`
+4. Verify page scrolls to About section
+5. Verify content is in Spanish
+
+### Programmatic Testing
+
+```javascript
+// Check current language detection
+const lang = document.documentElement.lang; // 'en' or 'es'
+
+// Simulate click
+document.querySelector('a[href^="/en/"]')?.click();
+// or
+document.querySelector('a[href^="/es/"]')?.click();
+```
+
+## Common Issues
+
+### Hash Not Preserving
+
+**Problem**: Switching languages loses the hash.
+
+**Solution**: Verify the `hash` variable is being appended:
+
+```astro
+const hash = Astro.url.hash || '';
+href={`/${otherLang}/${hash}`}  // Should include hash
+```
+
+### Wrong Language Showing
+
+**Problem**: Shows "English" when on English page.
+
+**Solution**: Component should show the *alternative* language:
+
+```astro
+const otherLang = lang === 'es' ? 'en' : 'es';
+{languages[otherLang]}  // Show OTHER language, not current
+```
+
+## Related Components
+
+- [Navbar](/components/navbar) - Contains the LanguageSelector
+- [ThemeToggle](/components/theme-toggle) - Companion control in navbar
+- All components use the i18n system and benefit from language switching

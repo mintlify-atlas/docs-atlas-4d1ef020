@@ -1,0 +1,319 @@
+---
+title: "Contact Component"
+description: "Interactive contact cards with email obfuscation and external links"
+---
+
+## Overview
+
+The Contact component provides three interactive contact cards (Email, LinkedIn, GitHub) with click handlers and base64-encoded contact information for security. Features animated cards and background decorations.
+
+## Source Location
+
+`/src/components/Contact.astro`
+
+## Features
+
+- Three contact methods: Email, LinkedIn, GitHub
+- Base64-encoded contact data for anti-scraping protection
+- Click and keyboard interaction support
+- Gradient icons with unique colors
+- Lift animation on hover
+- Background decorative blob
+- ARIA labels for accessibility
+
+## Props
+
+No props required. Uses translation system for labels and descriptions.
+
+## Code Example
+
+```astro
+import Contact from '../components/Contact.astro';
+
+<Contact />
+```
+
+## Contact Cards
+
+### Email Card
+
+```astro
+<div
+  id="contact-email"
+  data-contact-type="email"
+  data-value="a2V2Lm1wcjAzQG91dGxvb2suY29t"
+  role="button"
+  tabindex="0"
+  aria-label="Send email"
+>
+```
+
+- **Type**: Email (opens mailto: link)
+- **Encoded value**: Base64 encoded email address
+- **Icon color**: Red to pink gradient
+- **Action**: Opens default email client
+
+### LinkedIn Card
+
+```astro
+<div
+  id="contact-linkedin"
+  data-contact-type="linkedin"
+  data-value="aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL2tldmluLW0tcGFsbWEtci8="
+  role="button"
+  tabindex="0"
+  aria-label="Open LinkedIn profile"
+>
+```
+
+- **Type**: LinkedIn (opens new tab)
+- **Encoded value**: Base64 encoded LinkedIn URL
+- **Icon color**: Blue gradient
+- **Action**: Opens LinkedIn profile in new tab
+
+### GitHub Card
+
+```astro
+<div
+  id="contact-github"
+  data-contact-type="github"
+  data-value="aHR0cHM6Ly9naXRodWIuY29tL2tldm1wcg=="
+  role="button"
+  tabindex="0"
+  aria-label="Open GitHub profile"
+>
+```
+
+- **Type**: GitHub (opens new tab)
+- **Encoded value**: Base64 encoded GitHub URL
+- **Icon color**: Gray gradient
+- **Action**: Opens GitHub profile in new tab
+
+## Translation Keys
+
+<CodeGroup>
+```javascript Section Headers
+contact.title       // Main section heading
+contact.subtitle    // Subheading text
+```
+
+```javascript Card Labels
+contact.email       // "Email"
+contact.emailDesc   // Email description/prompt
+contact.linkedin    // "LinkedIn"
+contact.linkedinDesc
+contact.github      // "GitHub"
+contact.githubDesc
+```
+</CodeGroup>
+
+## Interactive Script
+
+The component includes JavaScript to handle contact card interactions:
+
+```javascript
+const cards = document.querySelectorAll('[data-contact-type]');
+cards.forEach(card => {
+  const handler = () => {
+    const type = card.getAttribute('data-contact-type');
+    const encoded = card.getAttribute('data-value');
+    if (!encoded || !type) return;
+    const decoded = atob(encoded); // Base64 decode
+
+    if (type === 'email') {
+      window.location.href = 'mailto:' + decoded;
+    } else {
+      window.open(decoded, '_blank', 'noopener,noreferrer');
+    }
+  };
+  
+  // Click handler
+  card.addEventListener('click', handler);
+  
+  // Keyboard handler (Enter or Space)
+  card.addEventListener('keydown', (e: Event) => {
+    if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+      e.preventDefault();
+      handler();
+    }
+  });
+});
+```
+
+<Note>
+  Contact information is base64-encoded in data attributes to prevent simple email harvesting by bots while remaining accessible to legitimate users.
+</Note>
+
+## Styling Details
+
+### Section Background
+
+```astro
+<div class="absolute inset-0 pointer-events-none overflow-hidden">
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-primary-400/10 dark:bg-primary-500/5 rounded-full blur-2xl"></div>
+</div>
+```
+
+### Grid Layout
+
+```astro
+<div class="grid sm:grid-cols-3 gap-6">
+```
+
+- **Mobile**: Stacked single column
+- **Small screens and up**: 3 columns
+- **Gap**: 24px between cards
+
+### Card Structure
+
+```astro
+<div class="group relative p-[1px] rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-primary-400 hover:to-accent-400">
+  <div class="p-6 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-[transform,box-shadow] duration-300 text-center cursor-pointer h-full">
+    <!-- Card content -->
+  </div>
+</div>
+```
+
+### Icon Gradients
+
+**Email** (Red/Pink):
+```astro
+<div class="bg-gradient-to-br from-red-400 to-pink-500">
+```
+
+**LinkedIn** (Blue):
+```astro
+<div class="bg-gradient-to-br from-blue-500 to-blue-700">
+```
+
+**GitHub** (Gray):
+```astro
+<div class="bg-gradient-to-br from-gray-700 to-gray-900 dark:from-gray-500 dark:to-gray-700">
+```
+
+### Icon Hover Effect
+
+```astro
+<div class="group-hover:scale-110 transition-transform">
+```
+
+Icon scales to 110% when card is hovered.
+
+## Performance
+
+<Tip>
+  The Contact section uses `content-visibility: auto` to defer rendering until it's near the viewport.
+</Tip>
+
+```astro
+<section id="contact" class="relative py-20 lg:py-28" style="content-visibility: auto; contain-intrinsic-size: auto 400px;">
+```
+
+- Content visibility optimization
+- Intrinsic size estimation (400px)
+- CSS-only hover animations
+
+## Accessibility
+
+- ✅ **Keyboard navigation**: Cards are keyboard accessible with Tab
+- ✅ **ARIA labels**: Each card has descriptive `aria-label`
+- ✅ **Role**: Cards have `role="button"` for screen readers
+- ✅ **Tabindex**: Cards have `tabindex="0"` for focus
+- ✅ **Enter/Space**: Both keys trigger the action
+- ✅ **External links**: Use `noopener,noreferrer` for security
+
+## Security
+
+### Base64 Encoding
+
+Contact information is encoded to prevent simple bot harvesting:
+
+```javascript
+// Email example
+const email = "kev.mpr03@outlook.com";
+const encoded = btoa(email); // "a2V2Lm1wcjAzQG91dGxvb2suY29t"
+
+// In HTML
+data-value="a2V2Lm1wcjAzQG91dGxvb2suY29t"
+
+// Decoded on interaction
+const decoded = atob(encoded); // "kev.mpr03@outlook.com"
+```
+
+### External Link Security
+
+```javascript
+window.open(decoded, '_blank', 'noopener,noreferrer');
+```
+
+- `noopener`: Prevents opened page from accessing `window.opener`
+- `noreferrer`: Doesn't send referrer information
+
+## Customization
+
+### Adding a New Contact Method
+
+1. Add the card HTML:
+
+```astro
+<div
+  id="contact-twitter"
+  class="..."
+  data-contact-type="twitter"
+  data-value={btoa('https://twitter.com/yourhandle')}
+  role="button"
+  tabindex="0"
+  aria-label="Open Twitter profile"
+>
+  <div class="bg-gradient-to-br from-sky-400 to-blue-500">
+    <!-- Twitter icon SVG -->
+  </div>
+  <h3>{t('contact.twitter')}</h3>
+  <p>{t('contact.twitterDesc')}</p>
+</div>
+```
+
+2. Add translations:
+
+```javascript
+contact: {
+  twitter: 'Twitter',
+  twitterDesc: 'Follow me',
+}
+```
+
+3. The script automatically handles it (no changes needed).
+
+### Changing Grid Layout
+
+```astro
+<!-- 4 cards -->
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+<!-- 2 cards -->
+<div class="grid sm:grid-cols-2 gap-6">
+
+<!-- Always single column -->
+<div class="grid grid-cols-1 gap-6">
+```
+
+### Updating Contact Information
+
+Encode new values:
+
+```javascript
+// In browser console or Node.js
+btoa('newemail@example.com')
+// Output: "bmV3ZW1haWxAZXhhbXBsZS5jb20="
+
+btoa('https://linkedin.com/in/newprofile')
+// Output: "aHR0cHM6Ly9saW5rZWRpbi5jb20vaW4vbmV3cHJvZmlsZQ=="
+```
+
+Then update `data-value` attributes.
+
+## Related Components
+
+- [Navbar](/components/navbar) - Contains link to Contact section
+- [Footer](/components/footer) - Complements contact information
+- [Hero](/components/hero) - Also has a contact CTA button

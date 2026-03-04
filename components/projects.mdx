@@ -1,0 +1,228 @@
+---
+title: "Projects Component"
+description: "Case studies showcase with challenge-solution format cards"
+---
+
+## Overview
+
+The Projects component displays a grid of case study cards showcasing cloud engineering projects. Each card follows a challenge-solution format with technology stack badges.
+
+## Source Location
+
+`/src/components/Projects.astro`
+
+## Features
+
+- Grid layout of case study cards
+- Challenge/Solution format for each project
+- Technology stack tags
+- Custom icons for different project types
+- Staggered reveal animations
+- Background decorative elements
+- Fully internationalized
+
+## Props
+
+No props required. Uses internal `caseStudies` array and translation system.
+
+## Data Structure
+
+### Case Studies Array
+
+```typescript
+const caseStudies = [
+  {
+    titleKey: 'case1.title' as const,
+    challengeKey: 'case1.challenge' as const,
+    solutionKey: 'case1.solution' as const,
+    tech: ['Azure RBAC', 'PowerShell'],
+    icon: 'shield',
+  },
+  // ... more case studies
+];
+```
+
+<ParamField path="titleKey" type="string">
+  Translation key for the case study title
+</ParamField>
+
+<ParamField path="challengeKey" type="string">
+  Translation key for the challenge description
+</ParamField>
+
+<ParamField path="solutionKey" type="string">
+  Translation key for the solution description
+</ParamField>
+
+<ParamField path="tech" type="string[]">
+  Array of technology names used in the project
+</ParamField>
+
+<ParamField path="icon" type="string">
+  Icon identifier: 'shield', 'search', 'migrate', 'cost', or 'document'
+</ParamField>
+
+## Code Example
+
+```astro
+import Projects from '../components/Projects.astro';
+
+<Projects />
+```
+
+## Available Case Studies
+
+### 1. Security & Permissions (icon: shield)
+- **Tech**: Azure RBAC, PowerShell
+- Focus on access control and security optimization
+
+### 2. Discovery & Governance (icon: search)
+- **Tech**: Azure Resource Graph, Cloudockit, Governance
+- Resource inventory and compliance
+
+### 3. Migration & Disaster Recovery (icon: migrate)
+- **Tech**: Azure Backup, App Service Cloning, Disaster Recovery
+- Cross-region migration projects
+
+### 4. Cost Optimization (icon: cost)
+- **Tech**: Azure Cost Management, Excel/PowerBI, FinOps
+- Financial operations and cost analysis
+
+### 5. Documentation (icon: document)
+- **Tech**: Technical Writing, Canva, Cloud Adoption Framework (CAF)
+- Creating technical documentation and diagrams
+
+## Translation Keys
+
+<CodeGroup>
+```javascript Section Headers
+casestudies.title          // Main section title
+casestudies.challengeLabel // "Challenge" label
+casestudies.solutionLabel  // "Solution" label
+casestudies.stackLabel     // "Tech Stack" label
+```
+
+```javascript Case Study Content
+case1.title       // Project title
+case1.challenge   // Challenge description
+case1.solution    // Solution description
+// Repeat for case2, case3, case4, case5
+```
+</CodeGroup>
+
+## Component Usage
+
+### Grid Layout
+
+```astro
+<div class="grid md:grid-cols-2 gap-6">
+  {caseStudies.map((cs, i) => (
+    <div class="reveal" style={`--reveal-delay: ${i * 120}ms`}>
+      <CaseStudyCard
+        title={t(cs.titleKey)}
+        challenge={t(cs.challengeKey)}
+        solution={t(cs.solutionKey)}
+        tech={cs.tech}
+        icon={cs.icon}
+        challengeLabel={t('casestudies.challengeLabel')}
+        solutionLabel={t('casestudies.solutionLabel')}
+        stackLabel={t('casestudies.stackLabel')}
+      />
+    </div>
+  ))}
+</div>
+```
+
+### Background Decoration
+
+```astro
+<div class="absolute inset-0 pointer-events-none overflow-hidden">
+  <div class="absolute top-0 right-0 w-72 h-72 bg-primary-400/10 dark:bg-primary-500/5 rounded-full blur-2xl"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 bg-accent-400/10 dark:bg-accent-500/5 rounded-full blur-2xl"></div>
+</div>
+```
+
+## Styling
+
+### Section Container
+
+```astro
+<section id="projects" class="relative py-20 lg:py-28" style="content-visibility: auto; contain-intrinsic-size: auto 600px;">
+```
+
+- Performance optimized with `content-visibility`
+- Responsive padding: `py-20` (mobile) to `py-28` (desktop)
+- Positioned relatively for absolute background elements
+
+### Reveal Animations
+
+Staggered animations with 120ms delay increments:
+
+```astro
+<div class="reveal" style={`--reveal-delay: ${i * 120}ms`}>
+```
+
+## Performance
+
+<Tip>
+  The Projects section uses `content-visibility: auto` to defer rendering when off-screen, improving initial page load performance.
+</Tip>
+
+- Content visibility optimization
+- Minimal layout shifts with intrinsic sizing
+- CSS-only background animations
+- Efficient grid layout
+
+## Accessibility
+
+- Semantic section element with `id="projects"`
+- Proper heading hierarchy
+- All case study content is keyboard accessible
+- ARIA labels passed to child components
+
+## Customization
+
+### Adding a New Case Study
+
+1. Add entry to the `caseStudies` array:
+
+```typescript
+const caseStudies = [
+  // existing entries...
+  {
+    titleKey: 'case6.title' as const,
+    challengeKey: 'case6.challenge' as const,
+    solutionKey: 'case6.solution' as const,
+    tech: ['Azure Functions', 'Logic Apps', 'Event Grid'],
+    icon: 'search', // or create a new icon
+  },
+];
+```
+
+2. Add translations in your i18n files:
+
+```javascript
+case6: {
+  title: 'Your Project Title',
+  challenge: 'The challenge description...',
+  solution: 'How you solved it...'
+}
+```
+
+### Changing Grid Layout
+
+Modify the grid classes:
+
+```astro
+<!-- 3 columns on large screens -->
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+<!-- Single column on all screens -->
+<div class="grid grid-cols-1 gap-6">
+```
+
+## Related Components
+
+- [CaseStudyCard](/components/case-study-card) - Child component rendering individual cards
+- [Skills](/components/skills) - Complements projects by showing technical capabilities
+- [About](/components/about) - Provides professional context for projects

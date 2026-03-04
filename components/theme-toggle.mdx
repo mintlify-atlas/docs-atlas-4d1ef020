@@ -1,0 +1,275 @@
+---
+title: "ThemeToggle Component"
+description: "Dark mode toggle button with localStorage persistence"
+---
+
+## Overview
+
+The ThemeToggle component provides a button to switch between light and dark themes. It persists the user's preference in localStorage and displays appropriate sun/moon icons.
+
+## Source Location
+
+`/src/components/ThemeToggle.astro`
+
+## Features
+
+- Toggle between light and dark modes
+- Sun icon (shown in dark mode)
+- Moon icon (shown in light mode)
+- Persists preference to localStorage
+- Toggles `dark` class on document root
+- Hover effects
+- Accessible with ARIA label
+
+## Props
+
+No props required. Fully self-contained.
+
+## Code Example
+
+```astro
+import ThemeToggle from '../components/ThemeToggle.astro';
+
+<ThemeToggle />
+```
+
+## Full Source Code
+
+```astro
+---
+---
+
+<button
+  id="theme-toggle"
+  class="p-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
+  aria-label="Toggle dark mode"
+>
+  <!-- Sun icon (shown in dark mode) -->
+  <svg id="sun-icon" class="w-5 h-5 hidden dark:block text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+  </svg>
+  <!-- Moon icon (shown in light mode) -->
+  <svg id="moon-icon" class="w-5 h-5 block dark:hidden text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+  </svg>
+</button>
+
+<script>
+  const themeToggle = document.getElementById('theme-toggle');
+  
+  themeToggle?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>
+```
+
+## How It Works
+
+### 1. Icon Display Logic
+
+```astro
+<!-- Sun icon: hidden by default, shown in dark mode -->
+<svg id="sun-icon" class="hidden dark:block">
+
+<!-- Moon icon: shown by default, hidden in dark mode -->
+<svg id="moon-icon" class="block dark:hidden">
+```
+
+- Light mode: Moon icon visible (click to enable dark mode)
+- Dark mode: Sun icon visible (click to enable light mode)
+
+### 2. Theme Toggle Script
+
+```javascript
+themeToggle?.addEventListener('click', () => {
+  // Toggle 'dark' class on <html> element
+  const isDark = document.documentElement.classList.toggle('dark');
+  
+  // Save preference to localStorage
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
+```
+
+### 3. Initial Theme Detection
+
+<Note>
+  The initial theme is typically set in the Layout component's head script, before the page renders, to prevent FOUC (Flash of Unstyled Content).
+</Note>
+
+Typical layout script (not in this component):
+
+```html
+<script is:inline>
+  // Check localStorage or system preference
+  const theme = localStorage.getItem('theme') || 
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+</script>
+```
+
+## Styling Details
+
+### Button
+
+```astro
+<button class="p-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors">
+```
+
+- **Padding**: 8px all sides
+- **Border radius**: Large (lg = 8px)
+- **Hover**: Semi-transparent background
+- **Transition**: Smooth color change
+
+### Icons
+
+```astro
+<svg class="w-5 h-5 text-white">      <!-- Sun (dark mode) -->
+<svg class="w-5 h-5 text-slate-600">  <!-- Moon (light mode) -->
+```
+
+- **Size**: 20x20px
+- **Sun color**: White (visible against dark navbar)
+- **Moon color**: Slate-600 (visible against light navbar)
+
+## Integration in Navbar
+
+Typically used in the Navbar component:
+
+```astro
+<div class="flex items-center gap-2">
+  <LanguageSelector />
+  <ThemeToggle />
+  <button id="mobile-menu-btn">...</button>
+</div>
+```
+
+## Accessibility
+
+- ✅ **ARIA label**: "Toggle dark mode" for screen readers
+- ✅ **Keyboard accessible**: Standard button behavior
+- ✅ **Visual feedback**: Clear icon change
+- ✅ **Focus state**: Inherits from button styles
+
+## Browser Compatibility
+
+- ✅ **localStorage**: Supported in all modern browsers
+- ✅ **classList.toggle()**: Widely supported
+- ✅ **CSS dark: variant**: Requires Tailwind CSS
+
+## Persistence Flow
+
+1. **User clicks button**
+2. **JavaScript toggles** `dark` class on `<html>`
+3. **Tailwind CSS** applies `dark:*` styles throughout the site
+4. **localStorage** saves preference as "dark" or "light"
+5. **On next visit**, layout script reads localStorage and applies theme before render
+
+## Customization
+
+### Different Icons
+
+Replace SVG paths:
+
+```astro
+<!-- Sun icon -->
+<svg viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="5" />
+  <line x1="12" y1="1" x2="12" y2="3" />
+  <!-- ... more lines for rays -->
+</svg>
+
+<!-- Moon icon -->
+<svg viewBox="0 0 24 24">
+  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+</svg>
+```
+
+### Icon Animation
+
+Add rotation on toggle:
+
+```astro
+<svg class="w-5 h-5 transition-transform duration-300 dark:rotate-180">
+```
+
+### Button Styling
+
+Custom colors:
+
+```astro
+<button class="p-2 rounded-full bg-primary-100 dark:bg-primary-900 hover:scale-110 transition-all">
+```
+
+### Theme Values
+
+Use different theme identifiers:
+
+```javascript
+// Store as 'theme-dark' / 'theme-light'
+localStorage.setItem('theme-preference', isDark ? 'theme-dark' : 'theme-light');
+```
+
+## Testing Theme Toggle
+
+### Manual Testing
+
+1. Click the toggle button
+2. Verify icon changes (moon ↔ sun)
+3. Check page colors change
+4. Open DevTools → Application → Local Storage
+5. Verify `theme` key is "dark" or "light"
+6. Refresh page - theme should persist
+
+### Programmatic Toggle
+
+```javascript
+// In browser console
+document.getElementById('theme-toggle').click();
+
+// Check current theme
+localStorage.getItem('theme'); // "dark" or "light"
+
+// Manually set theme
+document.documentElement.classList.add('dark');
+localStorage.setItem('theme', 'dark');
+```
+
+## Common Issues
+
+### Flash of Wrong Theme
+
+**Problem**: Page loads in light mode then switches to dark.
+
+**Solution**: Ensure layout has inline script in `<head>` before body content:
+
+```html
+<script is:inline>
+  const theme = localStorage.getItem('theme');
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  }
+</script>
+```
+
+### Icons Not Changing
+
+**Problem**: Icon doesn't change when clicking.
+
+**Solution**: Verify Tailwind's `dark:` variant is configured:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  darkMode: 'class', // Must be 'class' not 'media'
+  // ...
+}
+```
+
+## Related Components
+
+- [Navbar](/components/navbar) - Contains the ThemeToggle
+- [LanguageSelector](/components/language-selector) - Companion control in navbar

@@ -1,0 +1,447 @@
+---
+title: Internationalization (i18n)
+description: Complete guide to the i18n system, managing translations, and adding new languages
+---
+
+## Overview
+
+The portfolio uses Astro's built-in i18n routing combined with a custom translation system. It currently supports Spanish (default) and English, with the ability to easily add more languages.
+
+## How i18n Works
+
+The internationalization system consists of three main parts:
+
+1. **Astro i18n routing** - Handles URL structure and locale detection
+2. **Translation utilities** - Provides translation functions and helpers
+3. **Language-specific pages** - Separate routes for each language
+
+### URL Structure
+
+All routes are prefixed with the language code:
+
+- Spanish: `https://yoursite.com/es/`
+- English: `https://yoursite.com/en/`
+- Root redirect: `https://yoursite.com/` → `https://yoursite.com/es/`
+
+## Configuration
+
+### Astro i18n Config
+
+The i18n configuration is defined in `astro.config.mjs`:
+
+```javascript astro.config.mjs
+export default defineConfig({
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: true,
+    },
+  },
+});
+```
+
+<Note>
+  `prefixDefaultLocale: true` ensures even the default language (Spanish) has a `/es/` prefix in the URL.
+</Note>
+
+### Translation System
+
+Translations are managed in `src/i18n/utils.ts`:
+
+```typescript src/i18n/utils.ts
+export const languages = {
+  es: 'Español',
+  en: 'English',
+};
+
+export const defaultLang = 'es';
+
+export const translations = {
+  es: {
+    'nav.home': 'Inicio',
+    'nav.about': 'Sobre mí',
+    'hero.name': 'Kevin Maximiliano Palma Romero',
+    // ... more translations
+  },
+  en: {
+    'nav.home': 'Home',
+    'nav.about': 'About',
+    'hero.name': 'Kevin Maximiliano Palma Romero',
+    // ... more translations
+  },
+} as const;
+```
+
+## Using Translations
+
+### In Astro Components
+
+To use translations in your components:
+
+<Steps>
+  <Step title="Get the current language">
+    Use `getLangFromUrl()` to detect the language from the URL:
+    
+    ```astro
+    ---
+    import { getLangFromUrl, useTranslations } from '../i18n/utils';
+    
+    const lang = getLangFromUrl(Astro.url);
+    ---
+    ```
+  </Step>
+  
+  <Step title="Create translation function">
+    Use `useTranslations()` to create a `t()` function:
+    
+    ```astro
+    ---
+    const t = useTranslations(lang);
+    ---
+    ```
+  </Step>
+  
+  <Step title="Use translations in markup">
+    Call `t()` with translation keys:
+    
+    ```astro
+    <h1>{t('hero.name')}</h1>
+    <p>{t('hero.bio')}</p>
+    ```
+  </Step>
+</Steps>
+
+### Complete Example
+
+```astro src/components/Hero.astro
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section>
+  <h1 class="text-4xl font-bold">
+    {t('hero.greeting')} {t('hero.name')}
+  </h1>
+  <p class="text-xl text-slate-600 dark:text-slate-400">
+    {t('hero.role')}
+  </p>
+  <p class="mt-4">
+    {t('hero.bio')}
+  </p>
+</section>
+```
+
+## Translation Utilities
+
+The `src/i18n/utils.ts` file exports several helper functions:
+
+### `getLangFromUrl(url: URL)`
+
+Extracts the language code from the URL pathname:
+
+```typescript
+export function getLangFromUrl(url: URL) {
+  const [, lang] = url.pathname.split('/');
+  if (lang in translations) return lang as keyof typeof translations;
+  return defaultLang;
+}
+```
+
+**Usage:**
+```typescript
+const lang = getLangFromUrl(Astro.url); // 'es' or 'en'
+```
+
+### `useTranslations(lang)`
+
+Returns a translation function for the specified language:
+
+```typescript
+export function useTranslations(lang: keyof typeof translations) {
+  return function t(key: TranslationKey) {
+    return translations[lang][key] || translations[defaultLang][key];
+  };
+}
+```
+
+**Features:**
+- Type-safe translation keys
+- Automatic fallback to default language
+- Returns the translation string
+
+### `getLocalizedPath(lang, hash)`
+
+Generates a localized path with optional hash:
+
+```typescript
+export function getLocalizedPath(lang: string, hash: string = '') {
+  return `/${lang}/${hash}`;
+}
+```
+
+**Usage:**
+```typescript
+getLocalizedPath('en', '#contact') // '/en/#contact'
+```
+
+## Adding New Languages
+
+Follow these steps to add a new language (e.g., French):
+
+<Steps>
+  <Step title="Update Astro config">
+    Add the new locale to `astro.config.mjs`:
+    
+    ```javascript astro.config.mjs
+    i18n: {
+      defaultLocale: 'es',
+      locales: ['es', 'en', 'fr'],
+      routing: {
+        prefixDefaultLocale: true,
+      },
+    }
+    ```
+  </Step>
+  
+  <Step title="Add to languages object">
+    Update the languages object in `src/i18n/utils.ts`:
+    
+    ```typescript src/i18n/utils.ts
+    export const languages = {
+      es: 'Español',
+      en: 'English',
+      fr: 'Français',
+    };
+    ```
+  </Step>
+  
+  <Step title="Add translations">
+    Create a new translation object:
+    
+    ```typescript src/i18n/utils.ts
+    export const translations = {
+      es: { /* Spanish translations */ },
+      en: { /* English translations */ },
+      fr: {
+        'nav.home': 'Accueil',
+        'nav.about': 'À propos',
+        'hero.greeting': 'Bonjour, je suis',
+        // ... add all translation keys
+      },
+    } as const;
+    ```
+  </Step>
+  
+  <Step title="Create language pages">
+    Create `src/pages/fr/index.astro`:
+    
+    ```astro src/pages/fr/index.astro
+    ---
+    import Layout from '../../layouts/Layout.astro';
+    import Hero from '../../components/Hero.astro';
+    import About from '../../components/About.astro';
+    // ... other components
+    
+    const pageTitle = 'Kevin Palma - Azure Cloud Engineer | Portfolio';
+    ---
+    
+    <Layout title={pageTitle}>
+      <Hero />
+      <About />
+      <!-- ... other sections -->
+    </Layout>
+    ```
+  </Step>
+  
+  <Step title="Add CV/Resume">
+    Create `public/cv/fr/` directory and add French CV file.
+  </Step>
+</Steps>
+
+<Warning>
+  Ensure ALL translation keys are present in the new language, otherwise the system will fall back to the default language for missing keys.
+</Warning>
+
+## Managing Translations
+
+### Translation Keys Structure
+
+Translation keys follow a hierarchical naming convention:
+
+```typescript
+'section.element': 'Translation'
+```
+
+**Examples:**
+- `nav.home` - Navigation: Home link
+- `hero.greeting` - Hero section: Greeting text
+- `about.title` - About section: Title
+- `contact.email` - Contact section: Email label
+
+### Adding New Translation Keys
+
+When adding new content:
+
+<Tabs>
+  <Tab title="Step 1: Define Key">
+    Choose a descriptive key following the naming convention:
+    ```typescript
+    'section.element.variation': 'Value'
+    ```
+  </Tab>
+  
+  <Tab title="Step 2: Add to All Languages">
+    Add the key to EVERY language in the translations object:
+    ```typescript
+    es: {
+      'hero.cta': 'Descargar CV',
+    },
+    en: {
+      'hero.cta': 'Download CV',
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Step 3: Use in Component">
+    Reference the key in your component:
+    ```astro
+    <button>{t('hero.cta')}</button>
+    ```
+  </Tab>
+</Tabs>
+
+### Type Safety
+
+The translation system is fully type-safe thanks to TypeScript:
+
+```typescript src/i18n/utils.ts
+export type TranslationKey = keyof typeof translations.es;
+```
+
+This means:
+- ✅ Autocomplete for translation keys
+- ✅ Compile-time error for invalid keys
+- ✅ Refactoring support
+
+## Language Selector
+
+The language selector is implemented in `src/components/LanguageSelector.astro`:
+
+```astro src/components/LanguageSelector.astro
+---
+import { getLangFromUrl, languages } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const otherLang = lang === 'es' ? 'en' : 'es';
+const hash = Astro.url.hash || '';
+---
+
+<a
+  href={`/${otherLang}/${hash}`}
+  class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium"
+  aria-label={`Switch to ${languages[otherLang]}`}
+>
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Globe icon -->
+  </svg>
+  {languages[otherLang]}
+</a>
+```
+
+### Features
+
+- Preserves URL hash when switching languages
+- Shows the name of the target language
+- Accessible with proper `aria-label`
+- Smooth transitions
+
+### Supporting More Than Two Languages
+
+For 3+ languages, replace the toggle with a dropdown:
+
+```astro Multi-language Selector
+---
+import { getLangFromUrl, languages } from '../i18n/utils';
+
+const currentLang = getLangFromUrl(Astro.url);
+const hash = Astro.url.hash || '';
+---
+
+<div class="relative">
+  <button id="lang-dropdown" class="flex items-center gap-2">
+    <span>{languages[currentLang]}</span>
+    <svg><!-- Chevron icon --></svg>
+  </button>
+  
+  <div id="lang-menu" class="hidden absolute">
+    {Object.entries(languages).map(([code, name]) => (
+      <a href={`/${code}/${hash}`} class="block px-4 py-2">
+        {name}
+      </a>
+    ))}
+  </div>
+</div>
+```
+
+## SEO Considerations
+
+### Language Meta Tags
+
+Ensure proper SEO by setting the HTML lang attribute:
+
+```astro src/layouts/Layout.astro
+---
+const lang = getLangFromUrl(Astro.url);
+---
+
+<html lang={lang}>
+```
+
+### Alternate Links
+
+Add alternate links for better SEO:
+
+```html
+<link rel="alternate" hreflang="es" href="https://yoursite.com/es/" />
+<link rel="alternate" hreflang="en" href="https://yoursite.com/en/" />
+<link rel="alternate" hreflang="x-default" href="https://yoursite.com/es/" />
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep translations synchronized">
+    Always add new keys to all languages at the same time to avoid missing translations.
+  </Accordion>
+  
+  <Accordion title="Use descriptive keys">
+    Make translation keys self-documenting: `hero.greeting` is better than `text1`.
+  </Accordion>
+  
+  <Accordion title="Avoid hardcoded strings">
+    All user-facing text should come from the translation system, even if it seems unlikely to be translated.
+  </Accordion>
+  
+  <Accordion title="Test all languages">
+    Always test your site in all supported languages to ensure nothing breaks with longer/shorter translations.
+  </Accordion>
+  
+  <Accordion title="Consider text expansion">
+    Some languages (like German) can be 30% longer than English. Design with flexibility in mind.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Customization" icon="palette" href="/guides/customization">
+    Learn how to customize your portfolio's appearance
+  </Card>
+  <Card title="Deployment" icon="rocket" href="/guides/deployment">
+    Deploy your multilingual portfolio to production
+  </Card>
+</CardGroup>

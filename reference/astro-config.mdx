@@ -1,0 +1,396 @@
+---
+title: Astro Configuration
+description: Astro framework configuration for the portfolio website
+---
+
+# Astro Configuration
+
+The Astro configuration file defines how the portfolio website is built, including internationalization, integrations, and build optimizations.
+
+## Overview
+
+Located in `astro.config.mjs`, this configuration file sets up:
+- Multi-language support (Spanish and English)
+- Tailwind CSS integration
+- Build optimizations and minification
+- Vite-specific settings
+
+## Full Configuration
+
+```javascript
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  integrations: [tailwind({ applyBaseStyles: false })],
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: true,
+    },
+  },
+  vite: {
+    build: {
+      cssMinify: 'esbuild',
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      }
+    }
+  }
+});
+```
+
+## Integrations
+
+### Tailwind CSS Integration
+
+```javascript
+integrations: [tailwind({ applyBaseStyles: false })]
+```
+
+<ParamField path="integrations" type="array">
+  Array of Astro integrations to enable
+</ParamField>
+
+The `@astrojs/tailwind` integration is configured with:
+
+<ParamField path="applyBaseStyles" type="boolean" default="false">
+  Disables Tailwind's base/reset styles, giving full control over default styling
+</ParamField>
+
+**Why disable base styles?**
+
+<Note>
+  Setting `applyBaseStyles: false` prevents Tailwind from injecting its default reset styles (like removing margins, setting font sizes, etc.). This is useful when you want more control over base styling or are using custom CSS resets.
+</Note>
+
+**Usage:**
+
+With this integration, you can use Tailwind utility classes directly in `.astro` files:
+
+```astro
+---
+// Component script
+---
+
+<div class="bg-primary-500 text-white p-4 rounded-lg">
+  <h1 class="text-2xl font-bold">Tailwind in Astro</h1>
+</div>
+```
+
+## Internationalization (i18n)
+
+### Configuration
+
+```javascript
+i18n: {
+  defaultLocale: 'es',
+  locales: ['es', 'en'],
+  routing: {
+    prefixDefaultLocale: true,
+  },
+}
+```
+
+### Default Locale
+
+<ParamField path="i18n.defaultLocale" type="string" default="es">
+  The default language for the website. Spanish (`es`) is used as the primary locale.
+</ParamField>
+
+**Impact:**
+- Fallback language when translations are missing
+- Default language for content and UI
+- Base locale for URL routing
+
+### Supported Locales
+
+<ParamField path="i18n.locales" type="array">
+  Array of supported language codes
+  - `es`: Spanish (Español)
+  - `en`: English
+</ParamField>
+
+These locales must match the language configuration in `src/i18n/utils.ts:1`:
+
+```typescript
+export const languages = {
+    es: 'Español',
+    en: 'English',
+};
+```
+
+### Routing Configuration
+
+<ParamField path="i18n.routing.prefixDefaultLocale" type="boolean" default="true">
+  When `true`, even the default locale (`es`) gets a URL prefix
+</ParamField>
+
+**Routing Behavior:**
+
+With `prefixDefaultLocale: true`:
+
+<CodeGroup>
+
+```text URLs
+✅ /es/           → Spanish homepage
+✅ /en/           → English homepage
+✅ /es/#about     → Spanish about section
+✅ /en/#contact   → English contact section
+❌ /              → Redirects to /es/
+```
+
+```text File Structure
+src/pages/
+  ├── index.astro       → Redirects to /es/
+  ├── es/
+  │   └── index.astro   → /es/
+  └── en/
+      └── index.astro   → /en/
+```
+
+</CodeGroup>
+
+**Alternative (`prefixDefaultLocale: false`):**
+
+If set to `false`, the default locale would not have a prefix:
+
+```text
+/      → Spanish homepage (default)
+/en/   → English homepage
+```
+
+<Tip>
+  Using `prefixDefaultLocale: true` provides consistency and makes it easier to switch default languages in the future without breaking URLs.
+</Tip>
+
+### Language Detection Flow
+
+1. User navigates to a URL (e.g., `/en/#about`)
+2. `getLangFromUrl()` extracts language from URL path (src/i18n/utils.ts:245)
+3. `useTranslations()` creates translation function for that language (src/i18n/utils.ts:251)
+4. Component renders with appropriate translations
+
+## Vite Configuration
+
+Astro uses Vite as its build tool. The `vite` section configures build optimizations:
+
+```javascript
+vite: {
+  build: {
+    cssMinify: 'esbuild',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
+  }
+}
+```
+
+### CSS Minification
+
+<ParamField path="vite.build.cssMinify" type="string" default="esbuild">
+  Uses esbuild for fast CSS minification during production builds
+</ParamField>
+
+**Benefits:**
+- Faster build times compared to other minifiers
+- Removes whitespace, comments, and optimizes CSS
+- Reduces final CSS bundle size
+
+### JavaScript Minification
+
+<ParamField path="vite.build.minify" type="string" default="terser">
+  Uses Terser for JavaScript minification with advanced compression options
+</ParamField>
+
+**Why Terser?**
+
+While esbuild is faster, Terser provides better compression and more configuration options.
+
+### Terser Options
+
+<ParamField path="vite.build.terserOptions.compress" type="object">
+  Advanced compression settings for production builds
+</ParamField>
+
+<AccordionGroup>
+  <Accordion title="drop_console">
+    **Value:** `true`  
+    **Effect:** Removes all `console.*` calls from production code
+    
+    ```javascript
+    // Before minification
+    console.log('Debug message');
+    console.error('Error');
+    
+    // After minification
+    // (removed entirely)
+    ```
+    
+    <Note>
+      This improves performance and prevents debug messages from appearing in production.
+    </Note>
+  </Accordion>
+
+  <Accordion title="drop_debugger">
+    **Value:** `true`  
+    **Effect:** Removes all `debugger` statements from production code
+    
+    ```javascript
+    // Before minification
+    function debug() {
+      debugger;
+      doSomething();
+    }
+    
+    // After minification
+    function debug() {
+      doSomething();
+    }
+    ```
+    
+    <Note>
+      Prevents accidental debugger breakpoints in production builds.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Build Process
+
+### Development Mode
+
+```bash
+npm run dev
+```
+
+In development:
+- No minification applied
+- Console logs and debuggers remain
+- Hot module replacement (HMR) enabled
+- Fast refresh for instant updates
+
+### Production Build
+
+```bash
+npm run build
+```
+
+In production:
+- CSS minified with esbuild
+- JavaScript minified with Terser
+- `console.*` calls removed
+- `debugger` statements removed
+- Optimized for performance
+
+### Preview
+
+```bash
+npm run preview
+```
+
+Previews the production build locally before deployment.
+
+## Integration with Source Code
+
+The configuration works seamlessly with the i18n utilities:
+
+```astro
+---
+// src/pages/en/index.astro
+import Layout from '@/layouts/Layout.astro';
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+
+const lang = getLangFromUrl(Astro.url); // 'en'
+const t = useTranslations(lang);
+---
+
+<Layout title={t('hero.name')}>
+  <h1>{t('hero.greeting')} {t('hero.name')}</h1>
+  <p>{t('hero.bio')}</p>
+</Layout>
+```
+
+**How it works:**
+
+1. Astro routing recognizes `/en/` based on `i18n.locales`
+2. The page is served from `src/pages/en/index.astro`
+3. `getLangFromUrl()` extracts `'en'` from the URL
+4. Translations render in English
+
+## Dependencies
+
+The configuration requires these packages (from package.json:11):
+
+```json
+{
+  "dependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.7.10",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "terser": "^5.46.0"
+  }
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="astro" icon="rocket">
+    **Version:** ^5.7.10  
+    Core framework for building the site
+  </Card>
+  <Card title="@astrojs/tailwind" icon="palette">
+    **Version:** ^6.0.2  
+    Official Tailwind integration for Astro
+  </Card>
+  <Card title="tailwindcss" icon="css3">
+    **Version:** ^3.4.17  
+    Utility-first CSS framework
+  </Card>
+  <Card title="terser" icon="compress">
+    **Version:** ^5.46.0  
+    JavaScript minifier for production builds
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Tip>
+  **Locale Consistency**
+  
+  Ensure the locales in `astro.config.mjs` match those defined in `src/i18n/utils.ts`. Mismatches will cause routing issues.
+</Tip>
+
+<Tip>
+  **Development vs Production**
+  
+  Test with `npm run build && npm run preview` before deploying to catch production-specific issues (like missing console outputs).
+</Tip>
+
+<Warning>
+  **Console Logging in Production**
+  
+  Since `drop_console: true` removes all console statements, implement proper error tracking (like Sentry) for production debugging.
+</Warning>
+
+<Note>
+  **Build Output**
+  
+  The optimized build outputs to the `dist/` directory, ready for static hosting on platforms like Vercel, Netlify, or Cloudflare Pages.
+</Note>
+
+## Related Files
+
+- `astro.config.mjs`: Configuration file (astro.config.mjs:1)
+- `tailwind.config.mjs`: Tailwind configuration (tailwind.config.mjs:1)
+- `src/i18n/utils.ts`: i18n utilities (src/i18n/utils.ts:1)
+- `package.json`: Dependencies (package.json:1)

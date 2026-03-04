@@ -1,0 +1,391 @@
+---
+title: Tailwind Configuration
+description: Custom Tailwind CSS configuration for the portfolio website
+---
+
+# Tailwind Configuration
+
+The Tailwind CSS configuration extends the default theme with custom colors, animations, and font families tailored for the portfolio website.
+
+## Overview
+
+Located in `tailwind.config.mjs`, this configuration file customizes Tailwind CSS with brand colors, smooth animations, and optimized settings.
+
+## Configuration Object
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+    content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+    darkMode: 'class',
+    theme: {
+        extend: {
+            // Custom extensions...
+        },
+    },
+    plugins: [],
+};
+```
+
+## Content Sources
+
+<ParamField path="content" type="array">
+  Glob patterns that define where Tailwind should look for class names
+</ParamField>
+
+```javascript
+content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}']
+```
+
+This pattern scans all files in the `src` directory with the following extensions:
+- `.astro` - Astro components
+- `.html` - HTML files
+- `.js`, `.jsx` - JavaScript files
+- `.md`, `.mdx` - Markdown files
+- `.svelte` - Svelte components
+- `.ts`, `.tsx` - TypeScript files
+- `.vue` - Vue components
+
+## Dark Mode
+
+<ParamField path="darkMode" type="string" default="class">
+  Dark mode strategy using the `class` approach
+</ParamField>
+
+```javascript
+darkMode: 'class'
+```
+
+Dark mode is toggled by adding the `dark` class to the HTML element. This is controlled by the ThemeToggle component (src/components/ThemeToggle.astro).
+
+## Theme Extensions
+
+### Font Family
+
+Custom font stack with Inter as the primary sans-serif font:
+
+```javascript
+fontFamily: {
+    sans: ['Inter', 'system-ui', 'sans-serif'],
+}
+```
+
+<ParamField path="theme.extend.fontFamily.sans" type="array">
+  Custom sans-serif font stack
+  - **Inter**: Modern, professional typeface
+  - **system-ui**: System default font fallback
+  - **sans-serif**: Generic sans-serif fallback
+</ParamField>
+
+**Usage:**
+
+```html
+<p class="font-sans">Text using Inter font</p>
+```
+
+### Custom Colors
+
+#### Primary Color Scale
+
+A comprehensive blue color palette for primary branding:
+
+```javascript
+primary: {
+    50: '#eff6ff',
+    100: '#dbeafe',
+    200: '#bfdbfe',
+    300: '#93c5fd',
+    400: '#60a5fa',
+    500: '#3b82f6',
+    600: '#2563eb',
+    700: '#1d4ed8',
+    800: '#1e40af',
+    900: '#1e3a8a',
+    950: '#172554',
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="Lighter Shades" icon="sun">
+    - `primary-50` to `primary-400`: Light blue variants for backgrounds and hover states
+  </Card>
+  <Card title="Core Brand" icon="palette">
+    - `primary-500`: Main brand color (#3b82f6)
+    - `primary-600`: Slightly darker for emphasis
+  </Card>
+  <Card title="Darker Shades" icon="moon">
+    - `primary-700` to `primary-950`: Deep blues for text and dark mode
+  </Card>
+</CardGroup>
+
+**Usage Examples:**
+
+```html
+<!-- Background -->
+<div class="bg-primary-500">Primary background</div>
+
+<!-- Text -->
+<h1 class="text-primary-700 dark:text-primary-300">Heading</h1>
+
+<!-- Border -->
+<button class="border-2 border-primary-600">Button</button>
+
+<!-- Hover state -->
+<a class="hover:bg-primary-100">Link</a>
+```
+
+#### Accent Color Scale
+
+Cyan accent colors for highlights and interactive elements:
+
+```javascript
+accent: {
+    400: '#22d3ee',
+    500: '#06b6d4',
+    600: '#0891b2',
+}
+```
+
+<ParamField path="theme.extend.colors.accent" type="object">
+  Cyan color variants for accents and CTAs
+  - `accent-400`: Light cyan (#22d3ee)
+  - `accent-500`: Core accent (#06b6d4)
+  - `accent-600`: Dark cyan (#0891b2)
+</ParamField>
+
+**Usage Examples:**
+
+```html
+<!-- Accent highlight -->
+<span class="text-accent-500">Featured text</span>
+
+<!-- Gradient -->
+<div class="bg-gradient-to-r from-primary-500 to-accent-500">
+  Gradient background
+</div>
+```
+
+### Custom Animations
+
+The configuration includes several custom animations for smooth, engaging interactions:
+
+```javascript
+animation: {
+    'float': 'float 8s ease-in-out infinite',
+    'float-delayed': 'float 8s ease-in-out 2s infinite',
+    'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+    'gradient': 'gradient 8s ease infinite',
+    'border-spin': 'border-spin 5s linear infinite',
+}
+```
+
+<AccordionGroup>
+  <Accordion title="animate-float">
+    **Duration:** 8 seconds  
+    **Timing:** ease-in-out  
+    **Repeat:** infinite  
+    
+    Creates a gentle vertical floating effect, moving the element up and down by 20px.
+    
+    ```html
+    <div class="animate-float">Floating element</div>
+    ```
+  </Accordion>
+
+  <Accordion title="animate-float-delayed">
+    **Duration:** 8 seconds  
+    **Timing:** ease-in-out  
+    **Delay:** 2 seconds  
+    **Repeat:** infinite  
+    
+    Same as `animate-float` but starts with a 2-second delay, useful for staggered animations.
+    
+    ```html
+    <div class="animate-float-delayed">Delayed float</div>
+    ```
+  </Accordion>
+
+  <Accordion title="animate-pulse-slow">
+    **Duration:** 4 seconds  
+    **Timing:** cubic-bezier(0.4, 0, 0.6, 1)  
+    **Repeat:** infinite  
+    
+    A slower, smoother pulse animation for subtle emphasis.
+    
+    ```html
+    <div class="animate-pulse-slow">Pulsing badge</div>
+    ```
+  </Accordion>
+
+  <Accordion title="animate-gradient">
+    **Duration:** 8 seconds  
+    **Timing:** ease  
+    **Repeat:** infinite  
+    
+    Animates the background position for smooth gradient transitions. Requires a gradient background.
+    
+    ```html
+    <div class="bg-gradient-to-r from-primary-500 to-accent-500 bg-[length:200%_200%] animate-gradient">
+      Animated gradient
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="animate-border-spin">
+    **Duration:** 5 seconds  
+    **Timing:** linear  
+    **Repeat:** infinite  
+    
+    Rotates an element 360 degrees continuously. Useful for loading spinners or decorative borders.
+    
+    ```html
+    <div class="animate-border-spin">Spinning border</div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Keyframes
+
+The animations are defined using custom keyframes:
+
+```javascript
+keyframes: {
+    float: {
+        '0%, 100%': { transform: 'translateY(0px)' },
+        '50%': { transform: 'translateY(-20px)' },
+    },
+    gradient: {
+        '0%, 100%': { backgroundPosition: '0% 50%' },
+        '50%': { backgroundPosition: '100% 50%' },
+    },
+    'border-spin': {
+        '0%': { transform: 'rotate(0deg)' },
+        '100%': { transform: 'rotate(360deg)' },
+    },
+}
+```
+
+<CodeGroup>
+
+```javascript float
+float: {
+    '0%, 100%': { transform: 'translateY(0px)' },
+    '50%': { transform: 'translateY(-20px)' },
+}
+// Moves element up 20px at midpoint, returns to origin
+```
+
+```javascript gradient
+gradient: {
+    '0%, 100%': { backgroundPosition: '0% 50%' },
+    '50%': { backgroundPosition: '100% 50%' },
+}
+// Shifts gradient background position horizontally
+```
+
+```javascript border-spin
+'border-spin': {
+    '0%': { transform: 'rotate(0deg)' },
+    '100%': { transform: 'rotate(360deg)' },
+}
+// Complete 360-degree rotation
+```
+
+</CodeGroup>
+
+## Plugins
+
+```javascript
+plugins: []
+```
+
+Currently, no additional Tailwind plugins are used. The configuration relies on Tailwind's core utilities and custom extensions.
+
+## Usage Examples
+
+### Combining Custom Utilities
+
+```html
+<!-- Card with custom colors and animation -->
+<div class="bg-primary-50 dark:bg-primary-950 border-2 border-primary-200 dark:border-primary-800 animate-float">
+  <h3 class="font-sans text-primary-900 dark:text-primary-100">
+    Floating Card
+  </h3>
+  <p class="text-accent-600 dark:text-accent-400">
+    With accent text
+  </p>
+</div>
+
+<!-- Gradient button with hover effect -->
+<button class="bg-gradient-to-r from-primary-600 to-accent-600 hover:from-primary-700 hover:to-accent-700 text-white font-sans px-6 py-3 rounded-lg transition-all duration-300">
+  Click Me
+</button>
+
+<!-- Animated gradient background -->
+<section class="bg-gradient-to-br from-primary-500 via-accent-500 to-primary-700 bg-[length:200%_200%] animate-gradient">
+  <h1 class="text-white font-sans">Hero Section</h1>
+</section>
+```
+
+### Dark Mode Patterns
+
+```html
+<!-- Responsive to dark mode -->
+<div class="bg-white dark:bg-primary-900 text-primary-900 dark:text-white">
+  Content that adapts to theme
+</div>
+
+<!-- Interactive with dark mode -->
+<a class="text-primary-600 hover:text-accent-500 dark:text-primary-400 dark:hover:text-accent-400">
+  Themed link
+</a>
+```
+
+## Integration with Astro
+
+The Tailwind configuration is integrated with Astro via the `@astrojs/tailwind` integration:
+
+```javascript
+// astro.config.mjs
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  integrations: [tailwind({ applyBaseStyles: false })],
+  // ...
+});
+```
+
+<Note>
+  **Base Styles Disabled**: The configuration uses `applyBaseStyles: false`, meaning Tailwind's base reset styles are not applied. This gives more control over default styling.
+</Note>
+
+## Best Practices
+
+<Tip>
+  **Semantic Color Usage**
+  - Use `primary-*` for brand elements and main UI components
+  - Use `accent-*` for highlights, CTAs, and interactive elements
+  - Maintain consistent color scales across light and dark modes
+</Tip>
+
+<Tip>
+  **Performance Optimization**
+  - The content glob pattern ensures only used classes are included in the final CSS
+  - Custom animations use hardware-accelerated properties (transform, opacity)
+  - Dark mode uses class strategy for instant theme switching
+</Tip>
+
+<Warning>
+  **Animation Accessibility**
+  Consider adding `prefers-reduced-motion` media queries for users who prefer reduced motion:
+  
+  ```html
+  <div class="motion-safe:animate-float">Only animates if motion is safe</div>
+  ```
+</Warning>
+
+## Related Files
+
+- `tailwind.config.mjs`: Configuration file (tailwind.config.mjs:1)
+- `astro.config.mjs`: Astro integration (astro.config.mjs:5)
+- `src/components/ThemeToggle.astro`: Dark mode toggle (src/components/ThemeToggle.astro:1)

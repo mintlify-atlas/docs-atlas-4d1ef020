@@ -1,0 +1,500 @@
+---
+title: Project Structure
+description: Directory organization and file structure of the portfolio website
+---
+
+# Project Structure
+
+The portfolio website follows Astro's recommended project structure with custom organization for internationalization, components, and assets.
+
+## Overview
+
+The project is organized to separate concerns clearly:
+- **Configuration files** at the root
+- **Source code** in `src/`
+- **Static assets** in `public/`
+- **Build output** in `dist/` (generated)
+
+## Root Directory
+
+```text
+portfolio/
+├── astro.config.mjs          # Astro configuration
+├── tailwind.config.mjs       # Tailwind CSS configuration
+├── package.json              # Dependencies and scripts
+├── package-lock.json         # Lock file for dependencies
+├── .gitignore               # Git ignore rules
+├── README.md                # Project documentation
+├── public/                  # Static assets
+├── src/                     # Source code
+└── dist/                    # Production build (generated)
+```
+
+### Configuration Files
+
+<AccordionGroup>
+  <Accordion title="astro.config.mjs">
+    **Purpose:** Main Astro configuration file
+    
+    **Contains:**
+    - i18n setup (locales, routing)
+    - Integrations (Tailwind)
+    - Build optimizations (Vite/Terser)
+    
+    **Reference:** See [Astro Configuration](/reference/astro-config)
+    
+    **Location:** `astro.config.mjs:1`
+  </Accordion>
+
+  <Accordion title="tailwind.config.mjs">
+    **Purpose:** Tailwind CSS customization
+    
+    **Contains:**
+    - Custom color schemes (primary, accent)
+    - Custom animations (float, gradient, border-spin)
+    - Font family configuration
+    - Dark mode settings
+    
+    **Reference:** See [Tailwind Configuration](/reference/tailwind-config)
+    
+    **Location:** `tailwind.config.mjs:1`
+  </Accordion>
+
+  <Accordion title="package.json">
+    **Purpose:** Project metadata and dependencies
+    
+    **Key Scripts:**
+    - `npm run dev` - Start development server
+    - `npm run build` - Build for production
+    - `npm run preview` - Preview production build
+    
+    **Dependencies:**
+    - astro (^5.7.10)
+    - @astrojs/tailwind (^6.0.2)
+    - tailwindcss (^3.4.17)
+    - terser (^5.46.0)
+    
+    **Location:** `package.json:1`
+  </Accordion>
+</AccordionGroup>
+
+## Source Directory (`src/`)
+
+The `src/` directory contains all application code:
+
+```text
+src/
+├── assets/                  # Images and media
+│   └── imgProfile.png       # Profile image
+├── components/              # Reusable Astro components
+│   ├── About.astro          # About section
+│   ├── CaseStudyCard.astro  # Case study card component
+│   ├── Contact.astro        # Contact section
+│   ├── Footer.astro         # Site footer
+│   ├── Hero.astro           # Hero section
+│   ├── LanguageSelector.astro  # Language switcher
+│   ├── Navbar.astro         # Navigation bar
+│   ├── Projects.astro       # Projects/case studies section
+│   ├── Skills.astro         # Skills section
+│   └── ThemeToggle.astro    # Dark mode toggle
+├── i18n/                    # Internationalization
+│   └── utils.ts             # Translation utilities
+├── layouts/                 # Page layouts
+│   └── Layout.astro         # Main layout wrapper
+├── pages/                   # File-based routing
+│   ├── index.astro          # Root redirect
+│   ├── es/                  # Spanish pages
+│   │   └── index.astro      # Spanish homepage
+│   └── en/                  # English pages
+│       └── index.astro      # English homepage
+└── env.d.ts                # TypeScript environment types
+```
+
+### Assets Directory
+
+<ParamField path="src/assets" type="directory">
+  Stores images and media files that are processed by Astro's asset pipeline
+</ParamField>
+
+**Contents:**
+- `imgProfile.png` - Profile picture used in Hero and About sections
+
+**Benefits:**
+- Automatic image optimization
+- Type-safe imports
+- Responsive image generation
+
+**Usage:**
+
+```astro
+---
+import profileImg from '@/assets/imgProfile.png';
+---
+
+<img src={profileImg.src} alt="Profile" />
+```
+
+### Components Directory
+
+<ParamField path="src/components" type="directory">
+  Reusable Astro components for building the UI
+</ParamField>
+
+Each component is a self-contained `.astro` file:
+
+<CardGroup cols={2}>
+  <Card title="About.astro" icon="user">
+    About section with education, experience, and certifications
+  </Card>
+  <Card title="CaseStudyCard.astro" icon="briefcase">
+    Reusable card component for displaying case studies
+  </Card>
+  <Card title="Contact.astro" icon="envelope">
+    Contact section with email, LinkedIn, and GitHub links
+  </Card>
+  <Card title="Footer.astro" icon="copyright">
+    Site footer with copyright and attribution
+  </Card>
+  <Card title="Hero.astro" icon="star">
+    Hero section with greeting, name, role, and CTAs
+  </Card>
+  <Card title="LanguageSelector.astro" icon="language">
+    Language switcher for toggling between Spanish and English
+  </Card>
+  <Card title="Navbar.astro" icon="bars">
+    Navigation bar with section links
+  </Card>
+  <Card title="Projects.astro" icon="diagram-project">
+    Projects and case studies showcase section
+  </Card>
+  <Card title="Skills.astro" icon="code">
+    Technical and soft skills display
+  </Card>
+  <Card title="ThemeToggle.astro" icon="moon">
+    Dark/light mode toggle button
+  </Card>
+</CardGroup>
+
+**Component Organization:**
+
+- All components use the i18n utilities for translations (src/i18n/utils.ts:251)
+- Components are composed in page files (src/pages/*/index.astro)
+- Styling uses Tailwind utility classes (tailwind.config.mjs:1)
+
+### i18n Directory
+
+<ParamField path="src/i18n" type="directory">
+  Internationalization utilities and translations
+</ParamField>
+
+**Files:**
+
+<Accordion title="utils.ts">
+  **Purpose:** Translation system implementation
+  
+  **Exports:**
+  - `languages` - Language configuration
+  - `defaultLang` - Default language ('es')
+  - `translations` - All translation strings
+  - `TranslationKey` - TypeScript type for keys
+  - `getLangFromUrl()` - Extract language from URL
+  - `useTranslations()` - Create translation function
+  - `getLocalizedPath()` - Generate localized URLs
+  
+  **Reference:** See [i18n Utilities](/reference/i18n-utils)
+  
+  **Location:** `src/i18n/utils.ts:1`
+</Accordion>
+
+**Translation Structure:**
+
+All UI text is stored in the `translations` object with keys organized by section:
+
+```typescript
+// Navigation
+'nav.home', 'nav.about', 'nav.projects', 'nav.skills', 'nav.contact'
+
+// Hero
+'hero.greeting', 'hero.name', 'hero.role', 'hero.bio', 'hero.cta'
+
+// Other sections...
+'about.*', 'edu.*', 'exp.*', 'case*.*', 'skills.*', 'contact.*', 'footer.*'
+```
+
+### Layouts Directory
+
+<ParamField path="src/layouts" type="directory">
+  Page layout components that wrap page content
+</ParamField>
+
+**Files:**
+
+<Accordion title="Layout.astro">
+  **Purpose:** Main layout wrapper for all pages
+  
+  **Responsibilities:**
+  - HTML document structure
+  - `<head>` metadata and SEO
+  - Global styles and scripts
+  - Dark mode initialization
+  - Common page wrapper
+  
+  **Usage:**
+  
+  ```astro
+  ---
+  import Layout from '@/layouts/Layout.astro';
+  ---
+  
+  <Layout title="Kevin Palma - Azure Cloud Engineer">
+    <!-- Page content -->
+  </Layout>
+  ```
+  
+  **Location:** `src/layouts/Layout.astro:1`
+</Accordion>
+
+### Pages Directory
+
+<ParamField path="src/pages" type="directory">
+  File-based routing - each file becomes a route
+</ParamField>
+
+**Structure:**
+
+```text
+src/pages/
+├── index.astro      # Root (/) - redirects to /es/
+├── es/
+│   └── index.astro  # Spanish homepage (/es/)
+└── en/
+    └── index.astro  # English homepage (/en/)
+```
+
+**Routing Behavior:**
+
+<CodeGroup>
+
+```text URL Mapping
+/           →  Redirects to /es/
+/es/        →  src/pages/es/index.astro
+/en/        →  src/pages/en/index.astro
+/es/#about  →  /es/ with #about anchor
+/en/#about  →  /en/ with #about anchor
+```
+
+```astro Page Example
+---
+// src/pages/en/index.astro
+import Layout from '@/layouts/Layout.astro';
+import Hero from '@/components/Hero.astro';
+import About from '@/components/About.astro';
+import { getLangFromUrl } from '@/i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+---
+
+<Layout>
+  <Hero />
+  <About />
+  <!-- More sections -->
+</Layout>
+```
+
+</CodeGroup>
+
+**Page Composition:**
+
+Each language version:
+1. Imports the main `Layout`
+2. Imports section components (`Hero`, `About`, `Projects`, etc.)
+3. Detects language using `getLangFromUrl(Astro.url)`
+4. Passes language to components for translation
+
+## Public Directory
+
+<ParamField path="public" type="directory">
+  Static assets served as-is (not processed by build tools)
+</ParamField>
+
+```text
+public/
+├── cv/                      # Resume/CV files
+│   ├── en/
+│   │   └── CV Kevin Maximiliano Palma Romero - Azure Cloud Engineer 2026.pdf
+│   └── es/
+│       └── CV Kevin Maximiliano Palma Romero - Azure Cloud Engineer 2026.pdf
+└── favicon.svg              # Site favicon
+```
+
+**Usage:**
+
+Files in `public/` are accessible at the root URL:
+
+```html
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" />
+
+<!-- CV Download Links -->
+<a href="/cv/en/CV Kevin Maximiliano Palma Romero - Azure Cloud Engineer 2026.pdf" download>
+  Download CV
+</a>
+```
+
+<Note>
+  Files in `public/` are **not** processed or optimized. Use `src/assets/` for images that need optimization.
+</Note>
+
+## Build Output (`dist/`)
+
+<ParamField path="dist" type="directory">
+  Generated directory containing the production build (not committed to Git)
+</ParamField>
+
+**Created by:** `npm run build`
+
+**Contents:**
+- Optimized HTML files
+- Minified CSS and JavaScript
+- Processed assets
+- Static files from `public/`
+
+**Deployment:**
+
+The `dist/` directory is ready for deployment to:
+- Vercel
+- Netlify
+- Cloudflare Pages
+- Any static hosting service
+
+## File Naming Conventions
+
+<CardGroup cols={2}>
+  <Card title=".astro files" icon="file-code">
+    Astro components and pages  
+    **Example:** `Hero.astro`, `index.astro`
+  </Card>
+  <Card title=".ts files" icon="typescript">
+    TypeScript utilities and types  
+    **Example:** `utils.ts`, `env.d.ts`
+  </Card>
+  <Card title=".mjs files" icon="js">
+    ES Module JavaScript config files  
+    **Example:** `astro.config.mjs`, `tailwind.config.mjs`
+  </Card>
+  <Card title=".json files" icon="brackets-curly">
+    JSON configuration and data  
+    **Example:** `package.json`
+  </Card>
+</CardGroup>
+
+## Import Aliases
+
+The project may use path aliases for cleaner imports:
+
+```typescript
+// Instead of:
+import Layout from '../../layouts/Layout.astro';
+import { useTranslations } from '../../i18n/utils';
+
+// Use aliases:
+import Layout from '@/layouts/Layout.astro';
+import { useTranslations } from '@/i18n/utils';
+```
+
+<Note>
+  Check `tsconfig.json` (if present) for path alias configuration.
+</Note>
+
+## Development Workflow
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
+
+# Visit:
+# http://localhost:4321/es/  (Spanish)
+# http://localhost:4321/en/  (English)
+```
+
+### Production Build
+
+```bash
+# Build optimized site
+npm run build
+
+# Preview locally
+npm run preview
+
+# Deploy dist/ directory
+```
+
+## Best Practices
+
+<Tip>
+  **Component Organization**
+  
+  Keep components focused and reusable. Each component should have a single responsibility.
+</Tip>
+
+<Tip>
+  **Asset Management**
+  
+  - Use `src/assets/` for images that need optimization
+  - Use `public/` for files that should be served as-is (PDFs, favicons)
+  - Name files descriptively (e.g., `imgProfile.png` vs `img1.png`)
+</Tip>
+
+<Tip>
+  **i18n Consistency**
+  
+  - Keep all translations in `src/i18n/utils.ts`
+  - Use translation keys consistently across components
+  - Follow the established naming pattern: `section.item`
+</Tip>
+
+<Warning>
+  **Git Ignore**
+  
+  Never commit:
+  - `node_modules/`
+  - `dist/`
+  - `.env` files
+  - Build artifacts
+  
+  These should be in `.gitignore`.
+</Warning>
+
+## Adding New Pages
+
+To add a new page to the site:
+
+1. **Create page files** in both language directories:
+   ```bash
+   src/pages/es/new-page.astro
+   src/pages/en/new-page.astro
+   ```
+
+2. **Add translations** to `src/i18n/utils.ts`:
+   ```typescript
+   'newpage.title': 'New Page Title',
+   'newpage.content': 'Page content...',
+   ```
+
+3. **Update navigation** in `Navbar.astro` if needed
+
+4. **Test both languages**:
+   - `/es/new-page`
+   - `/en/new-page`
+
+## Related Documentation
+
+- [Astro Configuration Reference](/reference/astro-config)
+- [Tailwind Configuration Reference](/reference/tailwind-config)
+- [i18n Utilities Reference](/reference/i18n-utils)
+- [Astro Official Documentation](https://docs.astro.build)

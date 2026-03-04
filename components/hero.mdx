@@ -1,0 +1,164 @@
+---
+title: "Hero Component"
+description: "Landing section with animated background, profile image, and call-to-action buttons"
+---
+
+## Overview
+
+The Hero component is the main landing section of the portfolio, featuring an animated background with floating blobs, a profile image with rotating gradient border, introduction text, and call-to-action buttons.
+
+## Source Location
+
+`/src/components/Hero.astro`
+
+## Features
+
+- Animated background gradient blobs with `animate-float` effects
+- Profile image with rotating gradient border animation
+- Responsive two-column layout (image + text)
+- Multilingual support (English/Spanish)
+- Call-to-action buttons (Contact & Download CV)
+- Scroll indicator with bounce animation
+- Status badge showing current role
+
+## Props
+
+This component doesn't accept props. It retrieves data from:
+
+- **Language detection**: Uses `getLangFromUrl(Astro.url)` to detect current language
+- **Translations**: Uses `useTranslations(lang)` for all text content
+- **Profile image**: Imports from `../assets/imgProfile.png`
+
+## Structure
+
+### Main Elements
+
+1. **Animated Background Blobs** - Three positioned divs with blur and animation
+2. **Text Content** - Left column with greeting, name, role, bio, and CTAs
+3. **Profile Photo** - Right column with bordered, animated image
+4. **Scroll Indicator** - Bottom-centered bounce animation
+
+## Code Example
+
+```astro
+import Hero from '../components/Hero.astro';
+
+<Hero />
+```
+
+## Translation Keys
+
+The component uses these translation keys (from `useTranslations`):
+
+<ParamField path="hero.greeting" type="string">
+  Greeting text (e.g., "Hello, I'm")
+</ParamField>
+
+<ParamField path="hero.name" type="string">
+  Full name display
+</ParamField>
+
+<ParamField path="hero.role" type="string">
+  Current job role
+</ParamField>
+
+<ParamField path="hero.bio" type="string">
+  Biography paragraph
+</ParamField>
+
+<ParamField path="hero.contact" type="string">
+  Contact button text
+</ParamField>
+
+<ParamField path="hero.cta" type="string">
+  Download CV button text
+</ParamField>
+
+## Styling Details
+
+### Animated Background
+
+```astro
+<div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-400/20 dark:bg-primary-500/10 rounded-full blur-2xl animate-float"></div>
+```
+
+- Three blobs positioned absolutely
+- Uses `blur-2xl` for soft edges
+- Custom animations: `animate-float`, `animate-float-delayed`, `animate-pulse-slow`
+- Performance optimized with `will-change` and `contain` properties
+
+### Profile Image Border
+
+```astro
+<div class="absolute -inset-1 bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 rounded-full animate-border-spin"></div>
+```
+
+- Rotating gradient border using `animate-border-spin`
+- Layered approach: blur layer + solid layer + content
+- Image optimized with Astro's `Image` component (WebP, quality 80)
+
+### CTA Buttons
+
+**Primary Button (Contact):**
+```astro
+<a class="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-accent-500 text-white font-semibold shadow-lg">Contact</a>
+```
+
+**Secondary Button (Download CV):**
+```astro
+<a class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200" download>Download CV</a>
+```
+
+## Responsive Behavior
+
+- **Mobile**: Single column, image above text, smaller profile photo (w-48 h-48)
+- **Desktop**: Two-column flex layout, larger profile photo (w-64 h-64)
+- **Text alignment**: Center on mobile, left-aligned on desktop
+
+## Accessibility
+
+- `aria-label` on CTA buttons for screen readers
+- Proper heading hierarchy (h1 for name)
+- `loading="eager"` on profile image for faster LCP
+- Keyboard-accessible buttons and links
+
+## Performance Optimizations
+
+<Tip>
+  The Hero section uses `loading="eager"` on the profile image since it's above the fold, improving Largest Contentful Paint (LCP) metrics.
+</Tip>
+
+- `will-change: transform, opacity` on animated elements
+- `contain: layout paint style` for better paint performance
+- WebP image format with optimized quality (80)
+- Minimal layout shifts with fixed dimensions
+
+## Customization
+
+### Changing Colors
+
+Update the gradient colors in the background blobs:
+
+```astro
+<!-- Primary blob -->
+<div class="bg-primary-400/20 dark:bg-primary-500/10"></div>
+
+<!-- Accent blob -->
+<div class="bg-accent-400/20 dark:bg-accent-500/10"></div>
+```
+
+### CV Download Path
+
+The CV path is language-specific:
+
+```astro
+href={`/cv/${lang}/CV Kevin Maximiliano Palma Romero - Azure Cloud Engineer 2026.pdf`}
+```
+
+Place PDF files in `/public/cv/en/` and `/public/cv/es/` directories.
+
+## Related Components
+
+- [Navbar](/components/navbar) - Contains navigation to Hero section
+- [ThemeToggle](/components/theme-toggle) - Controls dark mode styles
+- [LanguageSelector](/components/language-selector) - Switches translation language

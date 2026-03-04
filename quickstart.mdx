@@ -1,80 +1,500 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get Kevin Palma's portfolio website running locally in minutes with this step-by-step guide
 ---
 
-## Get started in three steps
+## Get Started in Minutes
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+This guide will walk you through setting up the portfolio website locally, running the development server, and making your first customizations.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+**Prerequisites**: You'll need Node.js 18+ and npm installed on your machine. Check your versions with `node --version` and `npm --version`.
 </Note>
+
+## Installation
+
+<Steps>
+  <Step title="Clone the Repository">
+    First, clone the repository to your local machine:
+    
+    ```bash
+    git clone <repository-url>
+    cd kevin-portfolio
+    ```
+  </Step>
+
+  <Step title="Install Dependencies">
+    Install all required packages using npm:
+    
+    ```bash
+    npm install
+    ```
+    
+    This will install:
+    - **Astro** (v5.7.10) - The web framework
+    - **Tailwind CSS** (v3.4.17) - Styling framework
+    - **@astrojs/tailwind** (v6.0.2) - Astro-Tailwind integration
+    - **Terser** (v5.46.0) - JavaScript minifier for production builds
+    
+    <CodeGroup>
+    ```json Installed Dependencies
+    {
+      "dependencies": {
+        "@astrojs/tailwind": "^6.0.2",
+        "astro": "^5.7.10",
+        "tailwindcss": "^3.4.17"
+      },
+      "devDependencies": {
+        "terser": "^5.46.0"
+      }
+    }
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Start Development Server">
+    Launch the development server with hot module reloading:
+    
+    ```bash
+    npm run dev
+    ```
+    
+    The server will start at **http://localhost:4321/** (Astro's default port).
+    
+    <Note>
+    The development server includes:
+    - **Hot Module Replacement (HMR)** - Instant updates without page refresh
+    - **TypeScript checking** - Real-time type validation
+    - **Error overlay** - Helpful error messages in the browser
+    </Note>
+  </Step>
+
+  <Step title="Open in Browser">
+    Navigate to **http://localhost:4321/** in your browser.
+    
+    You'll be automatically redirected to **http://localhost:4321/es/** (Spanish homepage) since Spanish is the default language.
+    
+    To view the English version, go to **http://localhost:4321/en/**
+  </Step>
+</Steps>
+
+## Available Scripts
+
+The portfolio includes four npm scripts for different workflows:
+
+<CodeGroup>
+```bash Development
+# Start development server with hot reload
+npm run dev
+```
+
+```bash Production Build
+# Build optimized production bundle
+npm run build
+```
+
+```bash Preview
+# Preview production build locally
+npm run preview
+```
+
+```bash Astro CLI
+# Run Astro commands directly
+npm run astro -- <command>
+```
+</CodeGroup>
+
+### Script Details
+
+| Command | Description | When to Use |
+|---------|-------------|-------------|
+| `npm run dev` | Starts dev server at http://localhost:4321 | During development and content editing |
+| `npm run build` | Builds production-ready static files to `dist/` | Before deployment or testing final output |
+| `npm run preview` | Serves production build locally | To test the built site before deploying |
+| `npm run astro` | Access Astro CLI commands | For advanced operations like `astro add` |
+
+## Verify Installation
+
+After starting the development server, you should see:
+
+<Accordion title="Homepage Features to Check">
+  - **Hero Section**: Profile image with animated gradient border
+  - **Language Selector**: ES/EN toggle in the navigation
+  - **Theme Toggle**: Moon/sun icon for dark mode
+  - **Smooth Animations**: Sections fading in as you scroll
+  - **Responsive Design**: Works on mobile, tablet, and desktop
+  - **CV Download Button**: Language-aware resume download
+</Accordion>
+
+<Accordion title="Navigation Sections">
+  - **Inicio/Home** - Hero section with introduction
+  - **Sobre mí/About** - Certifications, education, and experience timelines
+  - **Soluciones Cloud/Cloud Solutions** - 5 case study cards
+  - **Habilidades/Skills** - Technical, soft skills, and languages
+  - **Contacto/Contact** - Privacy-protected contact information
+</Accordion>
+
+## Understanding the Route Structure
+
+The portfolio uses Astro's built-in i18n routing:
+
+```
+Routes:
+├── /                    → Redirects to /es/ (default locale)
+├── /es/                 → Spanish homepage
+│   └── /es/index.astro
+├── /en/                 → English homepage
+│   └── /en/index.astro
+└── /cv/
+    ├── /es/            → Spanish CV (PDF)
+    └── /en/            → English CV (PDF)
+```
+
+### How Routing Works
+
+The i18n configuration in `astro.config.mjs`:
+
+```javascript
+i18n: {
+  defaultLocale: 'es',
+  locales: ['es', 'en'],
+  routing: {
+    prefixDefaultLocale: true,  // /es/ instead of /
+  },
+}
+```
+
+This ensures:
+- All routes are prefixed with the language code
+- Language can be extracted from the URL pathname
+- Translations are loaded based on the current route
+- CV downloads are language-aware
+
+## First Customizations
+
+Now that you have the portfolio running, let's make some quick customizations to understand the codebase.
+
+<Steps>
+  <Step title="Change the Hero Section Text">
+    Open `src/i18n/utils.ts` and modify the hero translations:
+    
+    ```typescript src/i18n/utils.ts
+    export const translations = {
+      es: {
+        'hero.greeting': 'Hola, soy',
+        'hero.name': 'Kevin Maximiliano Palma Romero',
+        'hero.role': 'Azure Cloud Engineer',
+        'hero.bio': 'Your custom bio in Spanish...',
+        // ...
+      },
+      en: {
+        'hero.greeting': "Hi, I'm",
+        'hero.name': 'Kevin Maximiliano Palma Romero',
+        'hero.role': 'Azure Cloud Engineer',
+        'hero.bio': 'Your custom bio in English...',
+        // ...
+      }
+    }
+    ```
+    
+    <Note>
+    Save the file and the page will automatically reload with your changes thanks to HMR.
+    </Note>
+  </Step>
+
+  <Step title="Customize Theme Colors">
+    Edit the primary color palette in `tailwind.config.mjs`:
+    
+    ```javascript tailwind.config.mjs
+    colors: {
+      primary: {
+        50: '#eff6ff',
+        100: '#dbeafe',
+        200: '#bfdbfe',
+        300: '#93c5fd',
+        400: '#60a5fa',
+        500: '#3b82f6',  // Main primary color
+        600: '#2563eb',
+        700: '#1d4ed8',
+        800: '#1e40af',
+        900: '#1e3a8a',
+        950: '#172554',
+      },
+      accent: {
+        400: '#22d3ee',  // Cyan accent
+        500: '#06b6d4',
+        600: '#0891b2',
+      },
+    }
+    ```
+    
+    These colors are used throughout:
+    - Gradient borders and backgrounds
+    - Button hover states
+    - Badge colors
+    - Link hover effects
+  </Step>
+
+  <Step title="Test Dark Mode">
+    Click the theme toggle in the navigation bar (moon/sun icon):
+    
+    - **Light Mode**: Uses `bg-slate-50` and `text-slate-800`
+    - **Dark Mode**: Uses `dark:bg-slate-950` and `dark:text-slate-100`
+    
+    The theme preference is saved to `localStorage` and persists across page reloads:
+    
+    ```javascript src/components/ThemeToggle.astro
+    themeToggle?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+    ```
+  </Step>
+
+  <Step title="Switch Languages">
+    Use the language selector in the navigation to toggle between Spanish and English:
+    
+    - Click **ES** → Navigates to `/es/`
+    - Click **EN** → Navigates to `/en/`
+    
+    All content updates automatically, including:
+    - Navigation labels
+    - Section headings
+    - Case study descriptions
+    - Button text
+    - CV download links
+  </Step>
+</Steps>
+
+## Development Workflow
+
+Here's a recommended workflow for developing and customizing the portfolio:
+
+<Steps>
+  <Step title="Start Dev Server">
+    Always keep the development server running:
+    ```bash
+    npm run dev
+    ```
+  </Step>
+
+  <Step title="Edit Component Files">
+    Make changes to `.astro` files in `src/components/`:
+    
+    ```
+    src/components/
+    ├── Hero.astro           # Landing section
+    ├── About.astro          # Certifications & timelines
+    ├── Projects.astro       # Case studies
+    ├── Skills.astro         # Skills grid
+    ├── Contact.astro        # Contact cards
+    ├── CaseStudyCard.astro  # Reusable card component
+    ├── Navbar.astro         # Navigation bar
+    ├── Footer.astro         # Footer section
+    ├── ThemeToggle.astro    # Dark mode toggle
+    └── LanguageSelector.astro # Language switcher
+    ```
+    
+    Changes are reflected immediately in the browser.
+  </Step>
+
+  <Step title="Update Translations">
+    Modify content in `src/i18n/utils.ts`:
+    
+    - Add new translation keys
+    - Update existing text
+    - Maintain parity between `es` and `en` objects
+    
+    <Warning>
+    Always update BOTH language objects to avoid fallback inconsistencies.
+    </Warning>
+  </Step>
+
+  <Step title="Test Across Languages">
+    Switch between `/es/` and `/en/` to verify translations:
+    
+    - Check that new keys display correctly
+    - Verify layout doesn't break with longer text
+    - Test RTL/LTR text rendering
+  </Step>
+
+  <Step title="Build for Production">
+    Before deploying, create a production build:
+    
+    ```bash
+    npm run build
+    ```
+    
+    This generates optimized static files in the `dist/` folder:
+    - Minified HTML, CSS, and JavaScript
+    - Optimized images (WebP format)
+    - Console logs removed
+    - Asset fingerprinting for cache busting
+  </Step>
+
+  <Step title="Preview Production Build">
+    Test the production build locally:
+    
+    ```bash
+    npm run preview
+    ```
+    
+    This serves the `dist/` folder exactly as it will appear in production.
+  </Step>
+</Steps>
+
+## Common Customizations
+
+<AccordionGroup>
+  <Accordion title="Update Profile Image">
+    Replace the profile image in `src/assets/imgProfile.png` with your own photo.
+    
+    The Hero component uses Astro's Image component for optimization:
+    
+    ```astro src/components/Hero.astro
+    import { Image } from 'astro:assets';
+    import imgProfile from '../assets/imgProfile.png';
+    
+    <Image
+      src={imgProfile}
+      alt="Your Name"
+      width={256}
+      height={256}
+      format="webp"
+      quality={80}
+      loading="eager"
+    />
+    ```
+  </Accordion>
+
+  <Accordion title="Add/Remove Case Studies">
+    Edit `src/components/Projects.astro` to modify case studies:
+    
+    ```astro
+    <CaseStudyCard
+      title={t('case1.title')}
+      challenge={t('case1.challenge')}
+      solution={t('case1.solution')}
+      tech={['PowerShell', 'Azure RBAC', 'Azure Policy']}
+      icon="shield"
+      challengeLabel={t('casestudies.challengeLabel')}
+      solutionLabel={t('casestudies.solutionLabel')}
+      stackLabel={t('casestudies.stackLabel')}
+    />
+    ```
+    
+    Available icons: `shield`, `search`, `migrate`, `cost`, `document`
+  </Accordion>
+
+  <Accordion title="Update Certifications">
+    Modify the certifications section in `src/components/About.astro`:
+    
+    ```astro
+    <a
+      href="https://learn.microsoft.com/..."
+      target="_blank"
+      rel="noopener noreferrer"
+      class="certification-badge"
+    >
+      AZ-104 — Azure Administrator
+    </a>
+    ```
+  </Accordion>
+
+  <Accordion title="Replace CV Files">
+    Add your own CV PDFs to:
+    - `public/cv/es/` - Spanish CV
+    - `public/cv/en/` - English CV
+    
+    Update the filename in the Hero component if needed:
+    
+    ```astro src/components/Hero.astro
+    <a
+      href={`/cv/${lang}/CV Kevin Maximiliano Palma Romero - Azure Cloud Engineer 2026.pdf`}
+      download
+    >
+      {t('hero.cta')}
+    </a>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Port 4321 already in use">
+    If port 4321 is occupied, Astro will automatically try the next available port (4322, 4323, etc.).
+    
+    Or specify a custom port:
+    ```bash
+    npm run dev -- --port 3000
+    ```
+  </Accordion>
+
+  <Accordion title="Dark mode not persisting">
+    Check browser console for localStorage errors. The theme toggle requires:
+    
+    ```javascript
+    localStorage.setItem('theme', 'dark');
+    localStorage.getItem('theme');
+    ```
+    
+    Ensure your browser allows localStorage access.
+  </Accordion>
+
+  <Accordion title="Translations not updating">
+    If translations don't appear after editing `utils.ts`:
+    
+    1. Check for TypeScript errors in the console
+    2. Verify both `es` and `en` objects have the same keys
+    3. Restart the dev server: `Ctrl+C` then `npm run dev`
+  </Accordion>
+
+  <Accordion title="Build errors">
+    Common build issues:
+    
+    ```bash
+    # Clear Astro cache
+    rm -rf .astro node_modules/.astro
+    
+    # Reinstall dependencies
+    rm -rf node_modules package-lock.json
+    npm install
+    
+    # Try build again
+    npm run build
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+Now that you have the portfolio running locally, explore these guides:
+
+<CardGroup cols={2}>
+  <Card title="Customization Guide" icon="palette" href="/guides/customization">
+    Learn how to customize components, colors, and animations
+  </Card>
+  
+  <Card title="Internationalization" icon="language" href="/guides/internationalization">
+    Manage translations and add new languages
+  </Card>
+  
+  <Card title="Deployment" icon="rocket" href="/guides/deployment">
+    Deploy to Vercel, Netlify, or other hosting platforms
+  </Card>
+  
+  <Card title="Components Reference" icon="puzzle-piece" href="/components/overview">
+    Detailed documentation for all Astro components
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+<Card title="Live Demo" icon="link" href="https://kevin-m-palma-r.vercel.app/">
+  View the live portfolio at kevin-m-palma-r.vercel.app
+</Card>
+
+---
+
+Ready to make the portfolio your own? Continue to the [Customization Guide](/guides/customization) to learn about advanced modifications.

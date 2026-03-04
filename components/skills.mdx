@@ -1,0 +1,326 @@
+---
+title: "Skills Component"
+description: "Categorized display of technical skills, soft skills, and languages"
+---
+
+## Overview
+
+The Skills component showcases technical competencies, soft skills, and language proficiencies organized in categorized cards. Each category displays related skills as interactive badges.
+
+## Source Location
+
+`/src/components/Skills.astro`
+
+## Features
+
+- Three main sections: Technical Skills, Soft Skills, Languages
+- Emoji icons for visual categorization
+- Responsive grid layout
+- Hover effects on skill badges and cards
+- Staggered reveal animations
+- Fully internationalized (soft skills and languages)
+- Dark mode support
+
+## Props
+
+No props required. Uses internal skill arrays and translation system.
+
+## Data Structures
+
+### Technical Skills
+
+```typescript
+const technicalSkills = [
+  {
+    category: 'Cloud & Infrastructure',
+    icon: '☁️',
+    skills: ['Microsoft Azure', 'AWS', 'Azure Virtual Machines', ...],
+  },
+  // 6 categories total
+];
+```
+
+<ParamField path="category" type="string">
+  Category name (not translated, displayed as-is)
+</ParamField>
+
+<ParamField path="icon" type="string">
+  Emoji icon representing the category
+</ParamField>
+
+<ParamField path="skills" type="string[]">
+  Array of skill names in this category
+</ParamField>
+
+### Technical Skill Categories
+
+1. **Cloud & Infrastructure** ☁️
+   - Microsoft Azure, AWS, Virtual Machines, VNets, Azure Migrate, DNS, Application Gateway
+
+2. **Networking & Security** 🔒
+   - Azure Networking, RBAC, Azure Advisor, Resource Graph, FinOps
+
+3. **Automation & Tools** ⚙️
+   - PowerShell, Docker, Git, Postman, Trello, Azure Pricing Calculator
+
+4. **Frontend** 🎨
+   - HTML, CSS, Tailwind CSS, JavaScript, TypeScript, Angular
+
+5. **Backend & Databases** 🗄️
+   - Node.js, Express.js, Java, Spring, PostgreSQL, MySQL
+
+6. **Azure Services** 🔷
+   - Web Apps, App Service Plans, SQL Server, MySQL Flexible Server, Function Apps, API Management
+
+### Soft Skills
+
+```typescript
+const softSkillCategories = [
+  {
+    categoryKey: 'soft.collab' as const,
+    icon: '🤝',
+    skills: ['soft.teamwork' as const, 'soft.communication' as const, ...],
+  },
+  // 3 categories
+];
+```
+
+<ParamField path="categoryKey" type="string">
+  Translation key for the category name
+</ParamField>
+
+<ParamField path="skills" type="string[]">
+  Array of translation keys for individual skills
+</ParamField>
+
+### Soft Skill Categories
+
+1. **Collaboration** 🤝
+   - Teamwork, Communication, Negotiation
+
+2. **Cognitive** 🧠
+   - Critical Thinking, Adaptability
+
+3. **Organization** 📋
+   - Planning, Work Ethics
+
+### Languages
+
+```typescript
+const languageCategory = {
+  categoryKey: 'lang.multilingual' as const,
+  icon: '🌐',
+  skills: ['lang.spanish' as const, 'lang.english' as const],
+};
+```
+
+## Code Example
+
+```astro
+import Skills from '../components/Skills.astro';
+
+<Skills />
+```
+
+## Translation Keys
+
+<CodeGroup>
+```javascript Section Titles
+skills.title      // Main section heading
+skills.technical  // "Technical Skills" heading
+skills.soft       // "Soft Skills" heading
+skills.languages  // "Languages" heading
+```
+
+```javascript Soft Skills
+soft.collab          // "Collaboration"
+soft.cognitive       // "Cognitive Abilities"
+soft.organization    // "Organization"
+soft.teamwork
+soft.communication
+soft.negotiation
+soft.critical        // Critical thinking
+soft.adaptability
+soft.planning
+soft.ethics          // Work ethics
+```
+
+```javascript Languages
+lang.multilingual    // "Multilingual"
+lang.spanish         // "Spanish (Native)"
+lang.english         // "English (Professional)"
+```
+</CodeGroup>
+
+## Component Structure
+
+### Technical Skills Grid
+
+```astro
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {technicalSkills.map((category, i) => (
+    <div class="reveal" style={`--reveal-delay: ${i * 100}ms`}>
+      <div class="skill-card ...">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-2xl">{category.icon}</span>
+          <h4>{category.category}</h4>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          {category.skills.map((skill) => (
+            <span class="skill-badge">{skill}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+```
+
+### Soft Skills Grid
+
+Same structure but uses translation keys:
+
+```astro
+<h4>{t(cat.categoryKey)}</h4>
+{cat.skills.map((skillKey) => (
+  <span>{t(skillKey)}</span>
+))}
+```
+
+## Styling Details
+
+### Skill Card
+
+```astro
+<div class="skill-card group relative p-[1px] rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:from-primary-400 hover:to-accent-400">
+  <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl p-5 h-full hover:-translate-y-1 transition-[transform,box-shadow] duration-300 shadow-lg hover:shadow-2xl">
+    <!-- Content -->
+  </div>
+</div>
+```
+
+- Gradient border (1px via padding)
+- Glass morphism background
+- Subtle lift on hover (`-translate-y-1`)
+- Shadow intensification
+- Full height for equal card heights
+
+### Skill Badges
+
+```astro
+<span class="px-2.5 py-1 text-xs font-medium rounded-lg bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800/30 hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors">
+  {skill}
+</span>
+```
+
+- Rounded pill shape
+- Primary color theme
+- Interactive hover state
+- Dark mode variants
+
+## Responsive Layout
+
+- **Mobile**: 1 column (stacked cards)
+- **Small screens**: 2 columns (`sm:grid-cols-2`)
+- **Large screens**: 3 columns (`lg:grid-cols-3`)
+
+## Performance
+
+<Tip>
+  The Skills section uses `content-visibility: auto` to improve rendering performance when the section is off-screen.
+</Tip>
+
+```astro
+<section id="skills" class="relative py-20 lg:py-28" style="content-visibility: auto; contain-intrinsic-size: auto 600px;">
+```
+
+- Content visibility optimization
+- Intrinsic size hint for layout stability
+- CSS-only animations
+
+## Animations
+
+Staggered reveal with 100ms increments:
+
+```astro
+style={`--reveal-delay: ${i * 100}ms`}
+```
+
+- Cards fade in and slide up
+- Delay based on index position
+- Smooth, progressive disclosure
+
+## Accessibility
+
+- Semantic HTML structure
+- Proper heading hierarchy (h2 → h3 → h4)
+- Color contrast meets WCAG AA standards
+- Skills are text-based (screen reader friendly)
+- Emoji icons have text labels
+
+## Customization
+
+### Adding Technical Skills
+
+Add a new category:
+
+```typescript
+const technicalSkills = [
+  // existing categories...
+  {
+    category: 'DevOps',
+    icon: '🚀',
+    skills: ['GitHub Actions', 'Azure DevOps', 'Terraform', 'Ansible'],
+  },
+];
+```
+
+Or add skills to existing category:
+
+```typescript
+{
+  category: 'Cloud & Infrastructure',
+  icon: '☁️',
+  skills: [...existingSkills, 'Kubernetes', 'Container Instances'],
+}
+```
+
+### Adding Soft Skills
+
+1. Add to the category array:
+
+```typescript
+const softSkillCategories = [
+  {
+    categoryKey: 'soft.leadership' as const,
+    icon: '👔',
+    skills: ['soft.mentoring' as const, 'soft.delegation' as const],
+  },
+];
+```
+
+2. Add translations:
+
+```javascript
+soft: {
+  leadership: 'Leadership',
+  mentoring: 'Mentoring',
+  delegation: 'Delegation',
+}
+```
+
+### Changing Grid Layout
+
+```astro
+<!-- 4 columns on extra large screens -->
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+<!-- Always 2 columns minimum -->
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+```
+
+## Related Components
+
+- [About](/components/about) - Shows education and certifications
+- [Projects](/components/projects) - Demonstrates skill application
+- [CaseStudyCard](/components/case-study-card) - Similar card-based pattern
