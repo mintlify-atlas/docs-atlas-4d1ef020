@@ -1,0 +1,108 @@
+{
+  "projectType": "frontend",
+  "projectName": "Kevin Palma Portfolio",
+  "projectDescription": "Personal portfolio website for Azure Cloud Engineer Kevin Maximiliano Palma Romero, built with Astro and Tailwind CSS.",
+  "theme": "aspen",
+  "primaryColor": "#2563eb",
+  "lightColor": "#06b6d4",
+  "darkColor": "#1e3a8a",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/customization",
+              "guides/internationalization",
+              "guides/deployment",
+              "guides/dark-mode"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Components",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "components/overview"
+            ]
+          },
+          {
+            "group": "Core Components",
+            "pages": [
+              "components/hero",
+              "components/about",
+              "components/projects",
+              "components/case-study-card",
+              "components/skills",
+              "components/contact"
+            ]
+          },
+          {
+            "group": "Layout Components",
+            "pages": [
+              "components/navbar",
+              "components/footer",
+              "components/theme-toggle",
+              "components/language-selector"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "Utilities",
+            "pages": [
+              "reference/i18n-utils",
+              "reference/tailwind-config"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "reference/astro-config",
+              "reference/project-structure"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Internationalization (i18n) with English and Spanish support",
+    "Dark mode toggle with persistent theme preferences",
+    "Glassmorphism design with backdrop blur and gradients",
+    "Scroll-reveal animations with staggered delays",
+    "Privacy-first contact cards (click to reveal)",
+    "Language-aware CV download",
+    "Timeline layouts for education and experience",
+    "Fully responsive mobile-first design"
+  ],
+  "publicApiSurface": [
+    "Hero.astro - Main hero section with profile and CTA",
+    "About.astro - Certifications, education, and experience timelines",
+    "Projects.astro - Cloud solutions section",
+    "CaseStudyCard.astro - Narrative case study card component",
+    "Skills.astro - Technical skills, soft skills, and languages",
+    "Contact.astro - Privacy-first contact section",
+    "Navbar.astro - Navigation bar with language/theme toggles",
+    "Footer.astro - Footer with copyright",
+    "ThemeToggle.astro - Light/dark mode toggle",
+    "LanguageSelector.astro - Language switcher (ES/EN)",
+    "Layout.astro - Global layout with scroll-reveal system",
+    "i18n/utils.ts - Translation utilities and strings"
+  ]
+}
