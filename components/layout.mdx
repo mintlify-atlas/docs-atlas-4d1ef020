@@ -1,0 +1,319 @@
+---
+title: "Layout"
+description: "Global layout wrapper with scroll-reveal animations and dark mode support"
+---
+
+## Overview
+
+The `Layout.astro` component is the main layout wrapper for all pages in the portfolio. It provides the HTML structure, includes global styles, handles dark mode initialization, and implements the scroll-reveal animation system.
+
+**Location:** `src/layouts/Layout.astro:1`
+
+## Features
+
+- **Dark mode initialization** - Prevents flash of unstyled content (FOUC)
+- **Scroll-reveal animations** - IntersectionObserver-based animations
+- **SEO optimization** - Meta tags and structured data (JSON-LD)
+- **Performance optimization** - Critical CSS inlining, font preloading
+- **Responsive design** - Mobile-first approach with custom scrollbar
+- **i18n support** - Language detection from URL
+
+## Props
+
+<ParamField path="title" type="string" required>
+  Page title displayed in the browser tab
+</ParamField>
+
+## Usage
+
+```astro
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout title="Kevin Palma - Portfolio">
+  <section>
+    <!-- Your page content -->
+  </section>
+</Layout>
+```
+
+## HTML Structure
+
+The Layout component provides a complete HTML document structure:
+
+```astro
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <!-- Meta tags, fonts, critical CSS -->
+  </head>
+  <body>
+    <Navbar />
+    <main>
+      <slot />  <!-- Your page content goes here -->
+    </main>
+    <Footer />
+    <!-- Dark mode and scroll-reveal scripts -->
+  </body>
+</html>
+```
+
+## Key Components
+
+### 1. Head Section
+
+The `<head>` includes:
+
+```astro
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Kevin Palma - Azure Cloud Engineer | Portfolio" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+```
+
+**Font Loading:**
+Uses `preload` with `onload` fallback for optimal performance:
+
+```html
+<link rel="preload" 
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" 
+  as="style" 
+  onload="this.onload=null;this.rel='stylesheet'" />
+```
+
+### 2. Critical CSS
+
+Inline critical CSS eliminates render-blocking:
+
+```css
+/* Critical CSS — inlined to eliminate render-blocking */
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  border-width: 0; 
+  border-style: solid; 
+}
+
+html { 
+  scroll-behavior: smooth; 
+  scroll-padding-top: 5rem; 
+}
+
+.dark body, html.dark body { 
+  background-color: #020617; 
+  color: #f1f5f9; 
+}
+
+.reveal { 
+  opacity: 0; 
+  transform: translateY(24px); 
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), 
+              transform .7s cubic-bezier(.16,1,.3,1); 
+  transition-delay: var(--reveal-delay, 0ms); 
+}
+
+.reveal.revealed { 
+  opacity: 1; 
+  transform: translateY(0); 
+}
+```
+
+### 3. Structured Data (JSON-LD)
+
+SEO-friendly structured data for search engines:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Kevin Maximiliano Palma Romero",
+  "jobTitle": "Azure Cloud Engineer",
+  "worksFor": { "@type": "Organization", "name": "Readymind" },
+  "hasCredential": [
+    { "@type": "EducationalOccupationalCredential", "name": "AZ-104 Azure Administrator" },
+    { "@type": "EducationalOccupationalCredential", "name": "AZ-700 Azure Network Engineer" }
+  ]
+}
+```
+
+## Dark Mode Initialization
+
+The dark mode script runs **before first paint** to prevent FOUC:
+
+```javascript
+// Dark mode initialization - runs before paint to avoid flash
+(function() {
+  const theme = localStorage.getItem('theme');
+  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+})();
+```
+
+**How it works:**
+1. Reads saved theme from `localStorage`
+2. Falls back to system preference if no saved theme
+3. Applies `dark` class to `<html>` element before rendering
+4. Uses inline script to execute before CSS loads
+
+## Scroll-Reveal Animation System
+
+The Layout implements a performant scroll-reveal system using IntersectionObserver:
+
+```javascript
+// Scroll-reveal animations using IntersectionObserver
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+function observeElements() {
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+}
+```
+
+**Using scroll-reveal in components:**
+
+```astro
+<section class="reveal" style="--reveal-delay: 0ms">
+  <h2>This fades in when scrolled into view</h2>
+</section>
+
+<div class="reveal" style="--reveal-delay: 100ms">
+  <p>This appears 100ms after the section</p>
+</div>
+```
+
+<Note>
+  The `--reveal-delay` CSS variable allows staggered animations. Increment by 50-100ms for each element.
+</Note>
+
+## Custom Scrollbar
+
+Global styles include a custom scrollbar themed to match the design:
+
+```css
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+```
+
+## Performance Optimizations
+
+1. **Critical CSS inlining** - Eliminates render-blocking CSS
+2. **Font preloading** - `rel="preload"` with async loading
+3. **Inline scripts** - Dark mode and animations don't block rendering
+4. **Smooth scroll** - Native CSS `scroll-behavior: smooth`
+5. **Scroll padding** - `scroll-padding-top: 5rem` accounts for fixed navbar
+6. **Contain styles** - `contain: style` on body improves paint performance
+
+## Accessibility
+
+- **Language attribute** - `<html lang={lang}>` set based on route
+- **Semantic HTML** - `<main>` for primary content
+- **Viewport meta** - Responsive scaling
+- **Smooth scroll** - Keyboard navigation friendly
+- **System preferences** - Respects `prefers-color-scheme`
+
+## Example: Complete Page
+
+```astro src/pages/en/index.astro
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import About from '../../components/About.astro';
+import Projects from '../../components/Projects.astro';
+import Skills from '../../components/Skills.astro';
+import Contact from '../../components/Contact.astro';
+---
+
+<Layout title="Kevin Palma - Azure Cloud Engineer">
+  <Hero />
+  <About />
+  <Projects />
+  <Skills />
+  <Contact />
+</Layout>
+```
+
+## Customization
+
+### Change Meta Description
+
+Edit line 20:
+
+```astro
+<meta name="description" content="Your custom description" />
+```
+
+### Modify Dark Mode Colors
+
+Edit line 31:
+
+```css
+.dark body, html.dark body { 
+  background-color: #your-dark-bg; 
+  color: #your-dark-text; 
+}
+```
+
+### Adjust Scroll Reveal Timing
+
+Modify the transition duration in line 36:
+
+```css
+.reveal { 
+  transition: opacity 1s cubic-bezier(.16,1,.3,1),  /* Change from .7s to 1s */
+              transform 1s cubic-bezier(.16,1,.3,1); 
+}
+```
+
+### Add Custom Global Styles
+
+Add styles in the `<style is:global>` block at the bottom of the file.
+
+## Related Components
+
+<CardGroup cols={2}>
+  <Card title="Navbar" icon="bars" href="/components/navbar">
+    Fixed navigation bar included in Layout
+  </Card>
+  
+  <Card title="Footer" icon="align-center" href="/components/footer">
+    Footer component included in Layout
+  </Card>
+  
+  <Card title="Theme Toggle" icon="moon" href="/components/theme-toggle">
+    Dark mode toggle that works with Layout
+  </Card>
+  
+  <Card title="Language Selector" icon="language" href="/components/language-selector">
+    Language switcher that updates lang attribute
+  </Card>
+</CardGroup>
+
+## Technical Details
+
+- **Import path:** `@/layouts/Layout.astro` or `../layouts/Layout.astro`
+- **File size:** ~3.7 KB (with inline scripts and styles)
+- **Dependencies:** Navbar, Footer, i18n utils
+- **Browser support:** Modern browsers (IntersectionObserver, CSS variables)

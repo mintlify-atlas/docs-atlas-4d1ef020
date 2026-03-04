@@ -64,6 +64,7 @@
           {
             "group": "Layout Components",
             "pages": [
+              "components/layout",
               "components/navbar",
               "components/footer",
               "components/theme-toggle",
